@@ -16,6 +16,7 @@ import EmailMode from "./features/EmailMode";
 import SocialMediaMode from "./features/SocialMediaMode";
 import URLMode from "./features/URLMode";
 import FirebaseTestPage from "./pages/FirebaseTestPage";
+import ChatbotIcon from "./components/ChatbotIcon";
 // Import Firebase test utilities for debugging
 import "./utils/firebaseTest";
 import "./utils/debugProgress";
@@ -114,6 +115,7 @@ function App() {
           <Layout>
             <AppRoutes />
           </Layout>
+          <ChatbotIcon />
         </GameProvider>
       </UserProvider>
     </BrowserRouter>
