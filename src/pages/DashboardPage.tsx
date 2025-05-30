@@ -330,9 +330,11 @@ const DashboardPage: React.FC = () => {
               <p className="text-gray-400 mb-4">
                 Complete game modes to unlock achievements and earn badges
               </p>
-              <Button variant="primary" onClick={() => navigate("/game")}>
-                Start Playing
-              </Button>
+              <div className="flex justify-center">
+                <Button variant="primary" onClick={() => navigate("/game")}>
+                  Start Playing
+                </Button>
+              </div>
             </Card>
           </div>
         </div>

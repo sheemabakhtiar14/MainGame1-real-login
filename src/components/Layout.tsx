@@ -10,6 +10,7 @@ import {
   LogIn,
   LogOut,
   User,
+  DollarSign,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUser } from "../context/UserContext";
@@ -48,9 +49,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               CyberSafe
             </span>
           </Link>
+
+          {/* Mobile Money Indicator - only show when authenticated */}
+          {state.isAuthenticated && (
+            <div className="flex md:hidden items-center space-x-1 bg-dark-800 rounded-full px-3 py-1 border border-dark-600">
+              <DollarSign size={14} className="text-green-400" />
+              <span className="text-green-400 font-medium text-sm">
+                {state.user?.money || 100}
+              </span>
+            </div>
+          )}
+
           <div className="hidden md:flex items-center space-x-3 text-sm font-medium">
             {state.isAuthenticated ? (
               <div className="flex items-center space-x-3">
+                {/* Virtual Money Indicator */}
+                <div className="flex items-center space-x-1 bg-dark-800 rounded-full px-3 py-1 border border-dark-600">
+                  <DollarSign size={14} className="text-green-400" />
+                  <span className="text-green-400 font-medium">
+                    {state.user?.money || 100}
+                  </span>
+                </div>
                 <Link to="/dashboard">
                   <Button
                     size="sm"
