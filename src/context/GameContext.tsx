@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
-import { GameState, GameMode, GameLevel, Answer } from "../types/game";
+import { GameState, GameMode, GameLevel } from "../types/game";
 
 const initialState: GameState = {
   mode: null,
@@ -24,7 +24,16 @@ type GameAction =
   | { type: "START_GAME" }
   | { type: "COMPLETE_GAME" }
   | { type: "RESET_GAME" }
-  | { type: "RESET_LEVEL" };
+  | { type: "RESET_LEVEL" }
+  | {
+      type: "INITIALIZE_WITH_PROGRESS";
+      payload: {
+        mode: GameMode;
+        level: GameLevel;
+        score: number;
+        money: number;
+      };
+    };
 
 const gameReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
@@ -96,6 +105,19 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         correctAnswers: 0,
         totalAnswers: 0,
       };
+    case "INITIALIZE_WITH_PROGRESS":
+      return {
+        ...state,
+        mode: action.payload.mode,
+        level: action.payload.level,
+        score: action.payload.score,
+        money: action.payload.money,
+        currentQuestion: 0,
+        correctAnswers: 0,
+        totalAnswers: 0,
+        gameStarted: false,
+        gameCompleted: false,
+      };
     default:
       return state;
   }
@@ -113,6 +135,12 @@ interface GameContextType {
   resetLevel: () => void;
   checkLevelCompletion: () => boolean;
   checkGameCompletion: () => boolean;
+  initializeWithProgress: (
+    mode: GameMode,
+    level: GameLevel,
+    score: number,
+    money: number
+  ) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -169,6 +197,18 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
     return state.level === 3 && state.totalAnswers === 3;
   };
 
+  const initializeWithProgress = (
+    mode: GameMode,
+    level: GameLevel,
+    score: number,
+    money: number
+  ) => {
+    dispatch({
+      type: "INITIALIZE_WITH_PROGRESS",
+      payload: { mode, level, score, money },
+    });
+  };
+
   return (
     <GameContext.Provider
       value={{
@@ -183,6 +223,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
         resetLevel,
         checkLevelCompletion,
         checkGameCompletion,
+        initializeWithProgress,
       }}
     >
       {children}

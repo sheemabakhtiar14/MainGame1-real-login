@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useGame } from "../context/GameContext";
 import { useUser } from "../context/UserContext";
+import { GameLevel } from "../types/game";
 import { socialMediaQuestions } from "../data/socialMediaQuestions";
 import Button from "../components/Button";
 import Card from "../components/Card";
@@ -22,16 +23,16 @@ import PageTransition from "../components/PageTransition";
 
 const SocialMediaMode: React.FC = () => {
   const navigate = useNavigate();
-  const { saveGameProgress } = useUser();
+  const { saveGameProgress, state: userState } = useUser();
   const {
     state,
     answerQuestion,
     resetGame,
     resetLevel,
     setLevel,
-    checkLevelCompletion,
     checkGameCompletion,
     completeGame,
+    initializeWithProgress,
   } = useGame();
 
   const [currentQuestions, setCurrentQuestions] = useState(
@@ -41,6 +42,28 @@ const SocialMediaMode: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [levelCompleteModal, setLevelCompleteModal] = useState(false);
+
+  // Initialize game with user's saved progress
+  useEffect(() => {
+    const userProgress = userState.gameProgress.find(
+      (p) => p.mode === "social"
+    );
+    if (userProgress && !state.mode) {
+      // Initialize with saved progress
+      const nextLevel = userProgress.completed
+        ? 1
+        : Math.min(userProgress.highestLevel + 1, 3);
+      initializeWithProgress(
+        "social",
+        nextLevel as GameLevel,
+        userProgress.score,
+        state.money
+      );
+    } else if (!state.mode) {
+      // Initialize for first time
+      initializeWithProgress("social", 1, 0, 100);
+    }
+  }, [userState.gameProgress, state.mode, initializeWithProgress, state.money]);
 
   useEffect(() => {
     // Filter questions for the current level

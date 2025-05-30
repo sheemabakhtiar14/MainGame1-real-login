@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useGame } from "../context/GameContext";
 import { useUser } from "../context/UserContext";
+import { GameLevel } from "../types/game";
 import { ollamaService, EmailScam } from "../services/ollamaService";
 import Button from "../components/Button";
 import Card from "../components/Card";
@@ -20,7 +21,7 @@ import PageTransition from "../components/PageTransition";
 
 const EmailMode: React.FC = () => {
   const navigate = useNavigate();
-  const { saveGameProgress } = useUser();
+  const { saveGameProgress, state: userState } = useUser();
   const {
     state,
     answerQuestion,
@@ -29,6 +30,7 @@ const EmailMode: React.FC = () => {
     setLevel,
     checkGameCompletion,
     completeGame,
+    initializeWithProgress,
   } = useGame();
 
   const [allLevelEmails, setAllLevelEmails] = useState<{
@@ -43,6 +45,26 @@ const EmailMode: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string>("");
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  // Initialize game with user's saved progress
+  useEffect(() => {
+    const userProgress = userState.gameProgress.find((p) => p.mode === "email");
+    if (userProgress && !state.mode) {
+      // Initialize with saved progress
+      const nextLevel = userProgress.completed
+        ? 1
+        : Math.min(userProgress.highestLevel + 1, 3);
+      initializeWithProgress(
+        "email",
+        nextLevel as GameLevel,
+        userProgress.score,
+        state.money
+      );
+    } else if (!state.mode) {
+      // Initialize for first time
+      initializeWithProgress("email", 1, 0, 100);
+    }
+  }, [userState.gameProgress, state.mode, initializeWithProgress, state.money]);
 
   // Generate emails for all levels on initial load
   const generateAllLevelEmails = useCallback(async () => {

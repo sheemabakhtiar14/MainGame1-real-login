@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, MessageSquare } from "lucide-react";
 import { useGame } from "../context/GameContext";
 import { useUser } from "../context/UserContext";
+import { GameLevel } from "../types/game";
 import { standardQuestions } from "../data/standardQuestions";
 import Button from "../components/Button";
 import Card from "../components/Card";
@@ -14,7 +15,7 @@ import PageTransition from "../components/PageTransition";
 
 const StandardMode: React.FC = () => {
   const navigate = useNavigate();
-  const { saveGameProgress } = useUser();
+  const { saveGameProgress, state: userState } = useUser();
   const {
     state,
     answerQuestion,
@@ -25,6 +26,7 @@ const StandardMode: React.FC = () => {
     checkLevelCompletion,
     checkGameCompletion,
     completeGame,
+    initializeWithProgress,
   } = useGame();
 
   const [currentQuestions, setCurrentQuestions] = useState(
@@ -34,9 +36,30 @@ const StandardMode: React.FC = () => {
     currentQuestions[state.currentQuestion]
   );
   const [showFeedback, setShowFeedback] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [levelCompleteModal, setLevelCompleteModal] = useState(false);
+
+  // Initialize game with user's saved progress
+  useEffect(() => {
+    const userProgress = userState.gameProgress.find(
+      (p) => p.mode === "standard"
+    );
+    if (userProgress && !state.mode) {
+      // Initialize with saved progress
+      const nextLevel = userProgress.completed
+        ? 1
+        : Math.min(userProgress.highestLevel + 1, 3);
+      initializeWithProgress(
+        "standard",
+        nextLevel as GameLevel,
+        userProgress.score,
+        state.money
+      );
+    } else if (!state.mode) {
+      // Initialize for first time
+      initializeWithProgress("standard", 1, 0, 100);
+    }
+  }, [userState.gameProgress, state.mode, initializeWithProgress, state.money]);
 
   useEffect(() => {
     // Filter questions for the current level
@@ -45,8 +68,7 @@ const StandardMode: React.FC = () => {
     setCurrentQuestion(questions[state.currentQuestion]);
   }, [state.level, state.currentQuestion]);
 
-  const handleAnswer = (optionId: number, isCorrect: boolean) => {
-    setSelectedOption(optionId);
+  const handleAnswer = (isCorrect: boolean) => {
     setIsCorrect(isCorrect);
     answerQuestion(isCorrect);
     setShowFeedback(true);
@@ -54,7 +76,6 @@ const StandardMode: React.FC = () => {
 
   const handleContinue = () => {
     setShowFeedback(false);
-    setSelectedOption(null);
     setIsCorrect(null);
 
     // Check if all questions for this level have been answered
@@ -179,9 +200,7 @@ const StandardMode: React.FC = () => {
                             variant="outline"
                             fullWidth
                             className="justify-start py-3 text-left"
-                            onClick={() =>
-                              handleAnswer(option.id, option.isCorrect)
-                            }
+                            onClick={() => handleAnswer(option.isCorrect)}
                           >
                             {option.text}
                           </Button>
