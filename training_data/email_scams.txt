@@ -1,0 +1,71 @@
+EMAIL PHISHING SCAM EXAMPLES FOR TRAINING
+
+1. FAKE BANKING ALERTS
+Subject: [URGENT] Suspicious Activity Detected on Your Account
+Sender: security@bankoamerica-alerts.com
+Content: Your account shows unusual activity. Click here to verify your identity immediately or your account will be suspended within 24 hours.
+Red Flags: Misspelled domain, urgency tactics, threatening language
+
+2. FAKE SHIPPING NOTIFICATIONS
+Subject: Your Package Could Not Be Delivered - Action Required
+Sender: delivery@fedexs-shipping.net
+Content: We attempted to deliver your package but no one was home. Click the link to reschedule delivery and pay a small handling fee.
+Red Flags: Fake domain with extra 's', unexpected package, payment request
+
+3. FAKE TECH SUPPORT
+Subject: Your Computer is Infected - Immediate Action Required
+Sender: support@microsoft-security.org
+Content: Our systems detected malware on your computer. Download our security tool immediately to prevent data loss.
+Red Flags: Unsolicited tech support, fake Microsoft domain, scare tactics
+
+4. FAKE SUBSCRIPTION RENEWALS
+Subject: Your Netflix Account Will Be Suspended
+Sender: billing@netflix-payments.com
+Content: Your payment method has failed. Update your billing information within 48 hours to avoid service interruption.
+Red Flags: Fake domain, payment urgency, threatening suspension
+
+5. FAKE GOVERNMENT NOTICES
+Subject: IRS Refund Processing - Claim Your $2,847 Refund
+Sender: refunds@irs-treasury.gov
+Content: You are eligible for a tax refund. Verify your identity and banking information to receive your refund quickly.
+Red Flags: IRS doesn't email about refunds, suspicious domain, too good to be true
+
+6. FAKE LOTTERY/PRIZE SCAMS
+Subject: Congratulations! You've Won $500,000 in Our Sweepstakes
+Sender: winners@international-lottery.org
+Content: You've been selected as a winner! To claim your prize, provide your personal information and pay processing fees.
+Red Flags: Unsolicited lottery win, personal information request, upfront fees
+
+7. FAKE CRYPTOCURRENCY SCAMS
+Subject: Exclusive Bitcoin Investment Opportunity - 500% Returns Guaranteed
+Sender: investments@crypto-fortune.biz
+Content: Join our exclusive crypto trading platform. Invest $500 and get guaranteed returns of $2,500 within 30 days.
+Red Flags: Guaranteed returns, too good to be true, pressure to invest quickly
+
+8. FAKE SOCIAL MEDIA ALERTS
+Subject: Someone Tried to Login to Your Facebook Account
+Sender: security@facebook-alerts.net
+Content: We detected a suspicious login attempt from Russia. Secure your account by verifying your password immediately.
+Red Flags: Fake Facebook domain, geographical scare tactic, immediate action required
+
+9. FAKE JOB OFFERS
+Subject: High-Paying Work From Home Opportunity - $50/Hour
+Sender: hr@remote-jobs-usa.com
+Content: Congratulations! You've been pre-selected for a data entry position. No experience required. Send your SSN for background check.
+Red Flags: Unsolicited job offer, too good to be true, requesting sensitive information
+
+10. FAKE CHARITY SCAMS
+Subject: Help Hurricane Victims - Your Donation Will Be Doubled
+Sender: donations@disaster-relief.org
+Content: Urgent appeal for hurricane victims. Donate now and your contribution will be matched by our foundation. Wire transfer preferred.
+Red Flags: Urgency pressure, unusual payment method, unverified charity
+
+LEGITIMATE EMAIL CHARACTERISTICS:
+- Official domains matching company names exactly
+- Professional language without spelling errors
+- No urgent threats or pressure tactics
+- Clear sender identification
+- No requests for sensitive information via email
+- Proper company branding and formatting
+- Links that match the official website domain
+- Contact information that can be independently verified

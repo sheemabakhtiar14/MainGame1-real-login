@@ -1,0 +1,74 @@
+URL PHISHING SCAM EXAMPLES FOR TRAINING
+
+1. FAKE BANKING URLS
+Malicious: https://bank-of-america.security-verify.com/login
+Legitimate: https://bankofamerica.com/login
+Red Flags: Subdomain scam, extra words in domain, different TLD
+
+2. FAKE SOCIAL MEDIA URLS
+Malicious: https://facebook-security.com/verify-account
+Legitimate: https://facebook.com/login
+Red Flags: Hyphenated fake domain, not the official domain
+
+3. FAKE E-COMMERCE URLS
+Malicious: https://amazon-prime.shipping-update.net/track
+Legitimate: https://amazon.com/your-orders
+Red Flags: Multiple hyphens, suspicious subdomain, wrong TLD
+
+4. FAKE PAYMENT PROCESSOR URLS
+Malicious: https://paypal-secure.verification-center.org/login
+Legitimate: https://paypal.com/signin
+Red Flags: Multiple subdomains, fake verification center, wrong domain
+
+5. FAKE GOVERNMENT URLS
+Malicious: https://irs-refund.gov-treasury.com/claim
+Legitimate: https://irs.gov/refunds
+Red Flags: Hyphenated government agency, fake .com instead of .gov
+
+6. FAKE STREAMING SERVICE URLS
+Malicious: https://netflix-billing.account-update.net/payment
+Legitimate: https://netflix.com/youraccount
+Red Flags: Fake billing subdomain, suspicious domain structure
+
+7. FAKE TECH COMPANY URLS
+Malicious: https://microsoft-support.windows-security.org/scan
+Legitimate: https://support.microsoft.com
+Red Flags: Hyphenated company name, fake support domain
+
+8. FAKE CRYPTO EXCHANGE URLS
+Malicious: https://coinbase-pro.trading-secure.com/wallet
+Legitimate: https://coinbase.com or https://pro.coinbase.com
+Red Flags: Fake subdomain, wrong main domain
+
+9. FAKE DELIVERY SERVICE URLS
+Malicious: https://fedex-tracking.package-delivery.net/status
+Legitimate: https://fedex.com/tracking
+Red Flags: Hyphenated service name, fake delivery domain
+
+10. FAKE ANTIVIRUS URLS
+Malicious: https://windows-defender.security-scan.org/cleanup
+Legitimate: Windows Defender is built into Windows, no separate login site
+Red Flags: Fake software domain, misleading security branding
+
+TYPOSQUATTING EXAMPLES:
+- googIe.com (capital i instead of lowercase L)
+- arnazon.com (rn instead of m)
+- paypaI.com (capital I instead of lowercase l)
+- faceb00k.com (zeros instead of o's)
+- microsooft.com (extra o)
+
+URL SHORTENER RISKS:
+- bit.ly/suspicious-link
+- tinyurl.com/fake-bank
+- t.co/malicious-redirect
+- Short URLs hide the real destination
+
+LEGITIMATE URL CHARACTERISTICS:
+- Official company domains without hyphens or extra words
+- HTTPS encryption (but note: scammers can also use HTTPS)
+- Correct spelling of company names
+- Proper domain structure (company.com, not company-fake.com)
+- No suspicious subdomains
+- Government sites use .gov domains
+- Educational institutions use .edu domains
+- URLs match the company's known official website
