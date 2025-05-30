@@ -128,22 +128,25 @@ const userReducer = (state: UserState, action: UserAction): UserState => {
     }
 
     case "UPDATE_USER": {
-      console.log("UserReducer: UPDATE_USER action with payload:", action.payload);
+      console.log(
+        "UserReducer: UPDATE_USER action with payload:",
+        action.payload
+      );
       if (!state.user) {
         console.log("UserReducer: No user to update");
         return state;
       }
-      
+
       const updatedUser = {
         ...state.user,
         ...action.payload,
       };
-      
+
       const updatedState = {
         ...state,
         user: updatedUser,
       };
-      
+
       console.log("UserReducer: New state after UPDATE_USER:", updatedState);
       return updatedState;
     }
@@ -236,7 +239,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
             const userData = await FirebaseService.getUserData(user.id);
             if (userData) {
               console.log("📊 Retrieved user data from Firebase:", userData);
-              
+
               // Convert Firebase Timestamp to string for compatibility
               const userDataUpdate: Partial<User> = {
                 username: userData.username,
@@ -245,10 +248,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
                 photoURL: userData.photoURL,
                 // Convert Timestamp to string if needed
                 ...(userData.createdAt && {
-                  createdAt: userData.createdAt.toDate().toISOString()
-                })
+                  createdAt: userData.createdAt.toDate().toISOString(),
+                }),
               };
-              
+
               dispatch({ type: "UPDATE_USER", payload: userDataUpdate });
             } else {
               console.log("No user data found, initializing with defaults");
@@ -524,13 +527,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       console.log("Updating user money:", { userId: state.user.id, newAmount });
-      
+
       // Update in Firebase
       await FirebaseService.updateUserMoney(state.user.id, newAmount);
-      
+
       // Update local state
       dispatch({ type: "UPDATE_USER", payload: { money: newAmount } });
-      
+
       console.log("User money updated successfully");
     } catch (error) {
       console.error("Error updating user money:", error);
@@ -547,13 +550,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       console.log("Loading user data for user:", state.user.id);
-      
+
       // Load user data from Firebase
       const userData = await FirebaseService.getUserData(state.user.id);
-      
+
       if (userData) {
         console.log("Retrieved user data:", userData);
-        
+
         // Convert Firebase Timestamp to string for compatibility
         const userDataUpdate: Partial<User> = {
           username: userData.username,
@@ -562,10 +565,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           photoURL: userData.photoURL,
           // Convert Timestamp to string if needed
           ...(userData.createdAt && {
-            createdAt: userData.createdAt.toDate().toISOString()
-          })
+            createdAt: userData.createdAt.toDate().toISOString(),
+          }),
         };
-        
+
         dispatch({ type: "UPDATE_USER", payload: userDataUpdate });
       } else {
         console.log("No user data found, initializing with defaults");
@@ -576,7 +579,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           photoURL: state.user.photoURL,
         });
       }
-      
+
       console.log("User data loaded successfully");
     } catch (error) {
       console.error("Error loading user data:", error);

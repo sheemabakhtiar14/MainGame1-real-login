@@ -151,8 +151,8 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <Card className="p-4">
+          <div className="flex flex-wrap gap-3 mb-8">
+            <Card className="p-4 flex-1 min-w-[200px]">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-green-900/50 mr-4">
                   <DollarSign className="text-green-400" size={24} />
@@ -165,8 +165,8 @@ const DashboardPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-            
-            <Card className="p-4">
+
+            <Card className="p-4 flex-1 min-w-[200px]">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-primary-900/50 mr-4">
                   <Trophy className="text-primary-400" size={24} />
@@ -178,7 +178,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </Card>
 
-            <Card className="p-4">
+            <Card className="p-4 flex-1 min-w-[200px]">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-green-900/50 mr-4">
                   <BarChart3 className="text-green-400" size={24} />
@@ -195,7 +195,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </Card>
 
-            <Card className="p-4">
+            <Card className="p-4 flex-1 min-w-[200px]">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-accent-900/50 mr-4">
                   <CheckCircle className="text-accent-400" size={24} />
@@ -209,7 +209,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </Card>
 
-            <Card className="p-4">
+            <Card className="p-4 flex-1 min-w-[200px]">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-secondary-900/50 mr-4">
                   <Calendar className="text-secondary-400" size={24} />

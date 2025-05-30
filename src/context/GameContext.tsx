@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from "react";
 import { GameState, GameMode, GameLevel } from "../types/game";
 import { useUser } from "./UserContext";
 
