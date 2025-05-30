@@ -342,7 +342,8 @@ const URLMode: React.FC = () => {
                           </div>
                           <p className="text-gray-300 mb-3">{feedback}</p>
 
-                          {currentQuestion.redFlags && (
+                          {/* Show red flags for phishing URLs */}
+                          {currentQuestion.isPhishing && currentQuestion.redFlags && (
                             <div className="mt-3">
                               <h4 className="text-sm font-medium text-gray-400 mb-2">
                                 Red Flags to Look For:
@@ -352,6 +353,23 @@ const URLMode: React.FC = () => {
                                   <li key={idx} className="flex items-center">
                                     <span className="text-red-400 mr-2">•</span>
                                     {flag}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {/* Show trust indicators for legitimate URLs */}
+                          {!currentQuestion.isPhishing && currentQuestion.trustIndicators && (
+                            <div className="mt-3">
+                              <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                Trust Indicators:
+                              </h4>
+                              <ul className="text-sm text-gray-300 space-y-1">
+                                {currentQuestion.trustIndicators.map((indicator, idx) => (
+                                  <li key={idx} className="flex items-center">
+                                    <span className="text-green-400 mr-2">✓</span>
+                                    {indicator}
                                   </li>
                                 ))}
                               </ul>

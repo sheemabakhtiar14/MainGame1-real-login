@@ -5,7 +5,8 @@ interface EmailScam {
   sender: string;
   content: string;
   isPhishing: boolean;
-  redFlags: string[];
+  redFlags?: string[];
+  trustIndicators?: string[];
   explanation: string;
 }
 
@@ -14,7 +15,8 @@ interface URLScam {
   description: string;
   legitimateUrl: string;
   isPhishing: boolean;
-  redFlags: string[];
+  redFlags?: string[];
+  trustIndicators?: string[];
   explanation: string;
 }
 

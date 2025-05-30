@@ -1,0 +1,67 @@
+LEGITIMATE EMAIL EXAMPLES FOR TRAINING
+
+=== BUSINESS UPDATES ===
+Subject: Monthly Newsletter - March Updates
+From: newsletter@company.com
+Content: Dear valued customer, here's your monthly update with our latest features and company news. We've added new security features and improved our user experience. Visit our official website to learn more.
+Trust Indicators: Official company domain, no urgent action required, clear sender identity, professional tone
+
+Subject: Service Maintenance Notification
+From: support@microsoft.com
+Content: We will be performing scheduled maintenance on our servers this weekend from 2 AM to 6 AM EST. During this time, some services may be temporarily unavailable. We apologize for any inconvenience.
+Trust Indicators: Official Microsoft domain, advance notice, no action required, professional communication
+
+=== ACCOUNT NOTIFICATIONS ===
+Subject: Password Changed Successfully
+From: security@gmail.com
+Content: Your password was successfully changed on [Date]. If you didn't make this change, please contact our support team immediately through our official website.
+Trust Indicators: Official Gmail domain, confirmation of action taken, clear next steps if needed
+
+Subject: Monthly Statement Available
+From: statements@chase.com
+Content: Your monthly statement is now available in your online account. To view it, please log in to your account at chase.com using your regular credentials.
+Trust Indicators: Official bank domain, directs to official website, no links in email
+
+=== EDUCATIONAL COMMUNICATIONS ===
+Subject: Cybersecurity Tips for Safe Online Banking
+From: education@bankofamerica.com
+Content: Learn how to protect yourself online with these important cybersecurity tips. Always verify URLs, never click suspicious links, and use strong passwords. For more information, visit our security center at bankofamerica.com.
+Trust Indicators: Educational content, official domain, promotes good security practices
+
+Subject: Your Recent Purchase Confirmation
+From: orders@amazon.com
+Content: Thank you for your recent purchase. Your order #123456789 has been confirmed and will be shipped within 2 business days. You can track your order by logging into your Amazon account.
+Trust Indicators: Official Amazon domain, specific order number, no urgent action required
+
+=== PROFESSIONAL COMMUNICATIONS ===
+Subject: Meeting Reminder - Weekly Team Sync
+From: calendar@yourcompany.com
+Content: This is a reminder for your upcoming meeting scheduled for tomorrow at 2 PM. The meeting will be held in Conference Room A. Please bring your project updates.
+Trust Indicators: Internal company domain, specific details, professional context
+
+Subject: Software Update Available
+From: updates@microsoft.com
+Content: A new security update is available for your Microsoft Office software. The update includes important security improvements and bug fixes. Please install it at your convenience through Windows Update.
+Trust Indicators: Official Microsoft domain, optional timing, through legitimate update channels
+
+=== CUSTOMER SERVICE ===
+Subject: Survey - Help Us Improve Our Service
+From: feedback@yourbank.com
+Content: We value your opinion! Please take a few minutes to complete our customer satisfaction survey. Your feedback helps us improve our services. The survey is optional and takes about 3 minutes to complete.
+Trust Indicators: Official bank domain, optional participation, reasonable time commitment
+
+Subject: New Feature Announcement
+From: product@spotify.com
+Content: We're excited to announce a new feature in Spotify! You can now create collaborative playlists with friends. Check it out in your Spotify app or at spotify.com.
+Trust Indicators: Official Spotify domain, positive announcement, directs to official app/website
+
+=== WHAT MAKES THESE LEGITIMATE ===
+- Official domains from real companies
+- No urgent threats or pressure tactics
+- Clear, professional communication
+- No suspicious links or attachments
+- Specific, relevant information
+- Optional actions or reasonable requests
+- Consistent with company's normal communications
+- No requests for sensitive information via email
+- Direct users to official websites/apps for actions

@@ -1,0 +1,97 @@
+LEGITIMATE URL EXAMPLES FOR TRAINING
+
+=== OFFICIAL COMPANY WEBSITES ===
+URL: https://www.microsoft.com/en-us/security
+Description: Microsoft official security information page
+Trust Indicators: Official Microsoft domain, HTTPS encryption, clear path structure, well-known company
+
+URL: https://support.google.com/accounts/answer/185833
+Description: Google official account security help page
+Trust Indicators: Official Google support subdomain, HTTPS, specific help article URL structure
+
+URL: https://www.apple.com/support/security-updates/
+Description: Apple official security updates page
+Trust Indicators: Official Apple domain, HTTPS, clear path indicating security updates
+
+=== BANKING AND FINANCIAL ===
+URL: https://www.chase.com/digital/online-banking/security
+Description: Chase Bank official online banking security page
+Trust Indicators: Official Chase domain, HTTPS, banking-related path, no suspicious characters
+
+URL: https://www.bankofamerica.com/security-center/
+Description: Bank of America official security center
+Trust Indicators: Official BofA domain, HTTPS, clear security-focused path
+
+URL: https://www.paypal.com/us/webapps/mpp/security
+Description: PayPal official security information page
+Trust Indicators: Official PayPal domain, HTTPS, legitimate subdirectory structure
+
+=== E-COMMERCE SITES ===
+URL: https://www.amazon.com/gp/help/customer/display.html?nodeId=468496
+Description: Amazon official customer help page about account security
+Trust Indicators: Official Amazon domain, HTTPS, legitimate help page URL structure
+
+URL: https://help.ebay.com/members/account/protecting-account
+Description: eBay official account protection help page
+Trust Indicators: Official eBay help subdomain, HTTPS, clear help section path
+
+URL: https://www.etsy.com/help/article/327
+Description: Etsy official help article about account security
+Trust Indicators: Official Etsy domain, HTTPS, numbered help article format
+
+=== GOVERNMENT AND OFFICIAL ORGANIZATIONS ===
+URL: https://www.irs.gov/newsroom/taxpayer-guide-to-identity-theft
+Description: Official IRS page about identity theft protection
+Trust Indicators: Official .gov domain, HTTPS, government website, specific informational path
+
+URL: https://www.ftc.gov/tips-advice/business-center/privacy-and-security
+Description: FTC official business privacy and security guidance
+Trust Indicators: Official .gov domain, HTTPS, legitimate government resource
+
+URL: https://www.usa.gov/identity-theft
+Description: Official USA.gov page about identity theft
+Trust Indicators: Official .gov domain, HTTPS, government portal
+
+=== TECHNOLOGY AND SOFTWARE ===
+URL: https://blog.zoom.us/security-updates/
+Description: Zoom official blog security updates section
+Trust Indicators: Official Zoom blog subdomain, HTTPS, clear topic-focused path
+
+URL: https://security.adobe.com/
+Description: Adobe official security portal
+Trust Indicators: Official Adobe security subdomain, HTTPS, dedicated security site
+
+URL: https://www.dropbox.com/security
+Description: Dropbox official security information page
+Trust Indicators: Official Dropbox domain, HTTPS, clear security section
+
+=== EDUCATIONAL INSTITUTIONS ===
+URL: https://it.stanford.edu/security-privacy
+Description: Stanford University IT security and privacy page
+Trust Indicators: Official .edu domain, HTTPS, university IT department
+
+URL: https://cyber.harvard.edu/
+Description: Harvard Berkman Klein Center for Internet & Society
+Trust Indicators: Official .edu domain, HTTPS, academic institution
+
+=== NEWS AND INFORMATION ===
+URL: https://www.bbc.com/news/technology-56178977
+Description: BBC News article about cybersecurity
+Trust Indicators: Official BBC domain, HTTPS, news article with proper URL structure
+
+URL: https://www.cnn.com/2023/05/15/tech/cybersecurity-tips/index.html
+Description: CNN article about cybersecurity tips
+Trust Indicators: Official CNN domain, HTTPS, date-based URL structure typical of news sites
+
+=== WHAT MAKES THESE URLS LEGITIMATE ===
+- Official domains from recognized organizations
+- Proper HTTPS encryption
+- Clear, logical URL structure
+- No suspicious characters or substitutions
+- Consistent with organization's known web presence
+- Proper use of subdomains (like support., help., www.)
+- Legitimate file paths and parameters
+- No URL shorteners or redirects
+- Domain names match the claimed organization
+- No typos or character substitutions in domain names
+- Appropriate top-level domains (.com, .gov, .edu, .org)

@@ -15,7 +15,9 @@ class OllamaService:
         self.base_url = "http://localhost:11434/api/generate"
         self.training_data = {
             'email': self._load_training_data('email_scams.txt'),
-            'url': self._load_training_data('url_scams.txt')
+            'url': self._load_training_data('url_scams.txt'),
+            'legitimate_email': self._load_training_data('legitimate_emails.txt'),
+            'legitimate_url': self._load_training_data('legitimate_urls.txt')
         }
     
     def _load_training_data(self, filename: str) -> str:
@@ -159,8 +161,7 @@ class OllamaService:
                 return json.loads(json_str)
         except (json.JSONDecodeError, ValueError):
             pass
-        
-        # Fallback to generated content
+          # Fallback to generated content
         return self._generate_fallback_content(scam_type, level)
     
     def _generate_fallback_content(self, scam_type: str, level: int) -> Dict[str, Any]:
@@ -174,7 +175,25 @@ class OllamaService:
                 "redFlags": ["Urgency tactics", "Suspicious domain", "Threatening language"],
                 "explanation": "This email uses pressure tactics and a fake domain to steal credentials."
             }
-        else:  # URL
+        elif scam_type == 'email_legitimate':
+            return {
+                "subject": f"Monthly Newsletter - Company Updates",
+                "sender": f"newsletter@company.com",
+                "content": f"Here's your monthly company update with recent news and updates. We've added new features and improved security.",
+                "isPhishing": False,
+                "trustIndicators": ["Legitimate domain", "No urgent requests", "Clear sender identity", "Professional tone"],
+                "explanation": "This email comes from a legitimate company domain with no suspicious requests."
+            }
+        elif scam_type == 'url_legitimate':
+            return {
+                "url": f"https://www.microsoft.com/security",
+                "description": "Microsoft official security information page",
+                "legitimateUrl": "https://www.microsoft.com/security",
+                "isPhishing": False,
+                "trustIndicators": ["Official domain", "HTTPS encryption", "Clear path structure", "Well-known company"],
+                "explanation": "This URL is from the official Microsoft domain with proper security and clear structure."
+            }
+        else:  # URL scam
             return {
                 "url": f"https://bank-0f-america-{level}.com/verify",
                 "description": "Bank account verification page",
@@ -190,6 +209,96 @@ class OllamaService:
             return f"Great job! You correctly identified this {scam_type} scam. Keep looking for red flags like suspicious domains and urgent language."
         else:
             return f"Not quite right. This was a {scam_type} scam. Look for red flags like misspelled domains, urgent language, and requests for personal information."
+    
+    def generate_legitimate_email(self, level: int) -> Dict[str, Any]:
+        """Generate legitimate email for educational comparison"""
+        legitimate_contexts = {
+            1: "Create a simple, clearly legitimate business email with obvious trust indicators",
+            2: "Create a professional legitimate email with proper security practices", 
+            3: "Create a sophisticated legitimate email that demonstrates best security practices"
+        }
+        
+        context = f"""
+        Training Data Examples:
+        {self.training_data.get('legitimate_email', 'No training data available')}
+        
+        Level {level} Difficulty: {legitimate_contexts.get(level, legitimate_contexts[1])}
+        """
+        
+        prompt = f"""
+        Generate a legitimate, safe business email for level {level} educational purposes.
+        This should demonstrate what a REAL, SAFE email looks like.
+        
+        Return ONLY a JSON object with this exact structure:
+        {{
+            "subject": "Email subject line",
+            "sender": "sender@legitimate-domain.com",
+            "content": "Email body content",
+            "isPhishing": false,
+            "trustIndicators": ["indicator1", "indicator2", "indicator3"],
+            "explanation": "Why this email is legitimate and safe"
+        }}
+        
+        Focus on: proper domains, no urgency tactics, clear sender identity, no suspicious links.
+        {legitimate_contexts.get(level, legitimate_contexts[1])}
+        """
+        
+        response = self._call_ollama(prompt, context)
+        result = self._parse_json_response(response, 'email_legitimate', level)
+        result['isPhishing'] = False  # Ensure this is set correctly
+        return result
+
+    def generate_legitimate_url(self, level: int) -> Dict[str, Any]:
+        """Generate legitimate URL for educational comparison"""
+        legitimate_contexts = {
+            1: "Create a simple, clearly legitimate website URL with obvious trust indicators",
+            2: "Create a professional legitimate URL with proper security practices", 
+            3: "Create a sophisticated legitimate URL that demonstrates best security practices"
+        }
+        
+        context = f"""
+        Training Data Examples:
+        {self.training_data.get('legitimate_url', 'No training data available')}
+        
+        Level {level} Difficulty: {legitimate_contexts.get(level, legitimate_contexts[1])}
+        """
+        
+        prompt = f"""
+        Generate a legitimate, safe website URL for level {level} educational purposes.
+        This should demonstrate what a REAL, SAFE URL looks like.
+        
+        Return ONLY a JSON object with this exact structure:
+        {{
+            "url": "https://legitimate-domain.com/path",
+            "description": "What this URL actually is",
+            "legitimateUrl": "https://legitimate-domain.com/path",
+            "isPhishing": false,
+            "trustIndicators": ["indicator1", "indicator2", "indicator3"],
+            "explanation": "Why this URL is legitimate and safe"
+        }}
+        
+        Focus on: proper HTTPS, legitimate domains, clear paths, official company URLs.
+        {legitimate_contexts.get(level, legitimate_contexts[1])}
+        """
+        
+        response = self._call_ollama(prompt, context)
+        result = self._parse_json_response(response, 'url_legitimate', level)
+        result['isPhishing'] = False  # Ensure this is set correctly
+        return result
+
+    def generate_email_content(self, level: int, is_scam: bool) -> Dict[str, Any]:
+        """Generate either scam or legitimate email based on is_scam parameter"""
+        if is_scam:
+            return self.generate_email_scam(level)
+        else:
+            return self.generate_legitimate_email(level)
+
+    def generate_url_content(self, level: int, is_scam: bool) -> Dict[str, Any]:
+        """Generate either scam or legitimate URL based on is_scam parameter"""
+        if is_scam:
+            return self.generate_url_scam(level)
+        else:
+            return self.generate_legitimate_url(level)
 
 # Initialize the service
 ollama_service = OllamaService("gemma3:4b")
@@ -231,16 +340,25 @@ def generate_feedback():
 
 @app.route('/generate/email/bulk', methods=['POST'])
 def generate_email_bulk():
-    """Generate multiple email phishing scams for all levels"""
+    """Generate multiple emails (mix of legitimate and scam) for all levels"""
     try:
         emails_by_level = {}
         
-        # Generate 3 emails for each of the 3 levels
+        # Generate mixed content for each level (2 scams, 1 legitimate per level)
         for level in range(1, 4):
             emails = []
-            for i in range(3):
-                email = ollama_service.generate_email_scam(level)
+            
+            # Generate 2 scam emails
+            for i in range(2):
+                email = ollama_service.generate_email_content(level, is_scam=True)
                 emails.append(email)
+            
+            # Generate 1 legitimate email
+            legitimate_email = ollama_service.generate_email_content(level, is_scam=False)
+            emails.append(legitimate_email)
+            
+            # Shuffle to randomize order
+            random.shuffle(emails)
             emails_by_level[level] = emails
         
         return jsonify({"emails_by_level": emails_by_level})
@@ -249,16 +367,25 @@ def generate_email_bulk():
 
 @app.route('/generate/url/bulk', methods=['POST'])
 def generate_url_bulk():
-    """Generate multiple URL phishing scams for all levels"""
+    """Generate multiple URLs (mix of legitimate and scam) for all levels"""
     try:
         urls_by_level = {}
         
-        # Generate 3 URLs for each of the 3 levels
+        # Generate mixed content for each level (2 scams, 1 legitimate per level)
         for level in range(1, 4):
             urls = []
-            for i in range(3):
-                url = ollama_service.generate_url_scam(level)
+            
+            # Generate 2 scam URLs
+            for i in range(2):
+                url = ollama_service.generate_url_content(level, is_scam=True)
                 urls.append(url)
+            
+            # Generate 1 legitimate URL
+            legitimate_url = ollama_service.generate_url_content(level, is_scam=False)
+            urls.append(legitimate_url)
+            
+            # Shuffle to randomize order
+            random.shuffle(urls)
             urls_by_level[level] = urls
             
         return jsonify({"urls_by_level": urls_by_level})

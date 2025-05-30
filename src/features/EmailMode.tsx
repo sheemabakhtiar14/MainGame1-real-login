@@ -384,7 +384,10 @@ const EmailMode: React.FC = () => {
                                 </span>
                               </div>
                               <p className="text-gray-300 mb-3">{feedback}</p>
-                              {currentEmails[selectedEmail]?.redFlags && (
+                              
+                              {/* Show red flags for phishing emails */}
+                              {currentEmails[selectedEmail]?.isPhishing && 
+                               currentEmails[selectedEmail]?.redFlags && (
                                 <div className="mt-3">
                                   <h4 className="text-sm font-medium text-gray-400 mb-2">
                                     Red Flags to Look For:
@@ -400,6 +403,31 @@ const EmailMode: React.FC = () => {
                                             •
                                           </span>
                                           {flag}
+                                        </li>
+                                      )
+                                    )}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {/* Show trust indicators for legitimate emails */}
+                              {!currentEmails[selectedEmail]?.isPhishing && 
+                               currentEmails[selectedEmail]?.trustIndicators && (
+                                <div className="mt-3">
+                                  <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                    Trust Indicators:
+                                  </h4>
+                                  <ul className="text-sm text-gray-300 space-y-1">
+                                    {currentEmails[selectedEmail].trustIndicators.map(
+                                      (indicator, idx) => (
+                                        <li
+                                          key={idx}
+                                          className="flex items-center"
+                                        >
+                                          <span className="text-green-400 mr-2">
+                                            ✓
+                                          </span>
+                                          {indicator}
                                         </li>
                                       )
                                     )}
