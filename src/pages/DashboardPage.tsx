@@ -11,10 +11,10 @@ import {
   Link2,
   Clock,
   CheckCircle,
-  XCircle,
   Award,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
+import { GameMode } from "../types/game";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import PageTransition from "../components/PageTransition";
@@ -23,73 +23,65 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useUser();
 
-  // Dummy data for game progress
-  const dummyProgress = [
-    {
-      mode: "standard",
+  // Debug: Log the current state
+  console.log("📊 Dashboard: Current user state:", state);
+  console.log("📊 Dashboard: Game progress:", state.gameProgress);
+  console.log("📊 Dashboard: Progress count:", state.gameProgress.length);
+
+  // Game mode configurations with icons and styling
+  const modeConfigs = {
+    standard: {
       title: "Standard Mode",
       icon: <MessageCircle size={20} className="text-blue-400" />,
       color: "from-blue-500/20 to-blue-700/20",
       borderColor: "border-blue-700/30",
-      completed: true,
-      highestLevel: 3,
-      score: 120,
-      correctAnswers: 8,
-      totalAnswers: 9,
-      lastPlayed: "2023-06-15T14:30:00Z",
     },
-    {
-      mode: "email",
+    email: {
       title: "Email Simulation",
       icon: <Mail size={20} className="text-green-400" />,
       color: "from-green-500/20 to-green-700/20",
       borderColor: "border-green-700/30",
-      completed: false,
-      highestLevel: 2,
-      score: 80,
-      correctAnswers: 5,
-      totalAnswers: 6,
-      lastPlayed: "2023-06-14T10:15:00Z",
     },
-    {
-      mode: "social",
+    social: {
       title: "Social Media Simulation",
       icon: <Share2 size={20} className="text-purple-400" />,
       color: "from-purple-500/20 to-purple-700/20",
       borderColor: "border-purple-700/30",
-      completed: false,
-      highestLevel: 1,
-      score: 30,
-      correctAnswers: 2,
-      totalAnswers: 3,
-      lastPlayed: "2023-06-13T16:45:00Z",
     },
-    {
-      mode: "url",
+    url: {
       title: "URL Phishing Simulation",
       icon: <Link2 size={20} className="text-orange-400" />,
       color: "from-orange-500/20 to-orange-700/20",
       borderColor: "border-orange-700/30",
-      completed: false,
-      highestLevel: 0,
-      score: 0,
-      correctAnswers: 0,
-      totalAnswers: 0,
-      lastPlayed: "",
     },
-  ];
+  };
 
-  // Calculate total stats
-  const totalScore = dummyProgress.reduce((sum, mode) => sum + mode.score, 0);
-  const totalCorrect = dummyProgress.reduce(
+  // Create progress display data from real user progress
+  const progressData = Object.entries(modeConfigs).map(([mode, config]) => {
+    const userProgress = state.gameProgress.find((p) => p.mode === mode);
+    return {
+      mode: mode as GameMode,
+      ...config,
+      completed: userProgress?.completed || false,
+      highestLevel: userProgress?.highestLevel || 0,
+      score: userProgress?.score || 0,
+      correctAnswers: userProgress?.correctAnswers || 0,
+      totalAnswers: userProgress?.totalAnswers || 0,
+      lastPlayed: userProgress?.lastPlayed || "",
+    };
+  });
+
+  // Calculate total stats from real data
+  const totalScore = progressData.reduce((sum, mode) => sum + mode.score, 0);
+  const totalCorrect = progressData.reduce(
     (sum, mode) => sum + mode.correctAnswers,
     0
   );
-  const totalQuestions = dummyProgress.reduce(
+  const totalQuestions = progressData.reduce(
     (sum, mode) => sum + mode.totalAnswers,
     0
   );
-  const completedModes = dummyProgress.filter((mode) => mode.completed).length;
+  const completedModes = progressData.filter((mode) => mode.completed).length;
 
   // Format date
   const formatDate = (dateString: string) => {
@@ -229,7 +221,7 @@ const DashboardPage: React.FC = () => {
               animate="show"
               className="grid grid-cols-1 gap-4"
             >
-              {dummyProgress.map((mode) => (
+              {progressData.map((mode) => (
                 <motion.div key={mode.mode} variants={item}>
                   <Card
                     className={`p-4 bg-gradient-to-r ${mode.color} border ${mode.borderColor}`}
@@ -335,11 +327,14 @@ const DashboardPage: React.FC = () => {
 };
 
 // Add missing Play icon
-const Play = (props: any) => (
+const Play = ({
+  size = 24,
+  ...props
+}: { size?: number } & React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"

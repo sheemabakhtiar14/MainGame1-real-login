@@ -1,30 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Share2, ShieldAlert, CheckCircle, Heart, MessageCircle, Repeat2 } from 'lucide-react';
-import { useGame } from '../context/GameContext';
-import { socialMediaQuestions } from '../data/socialMediaQuestions';
-import Button from '../components/Button';
-import Card from '../components/Card';
-import Modal from '../components/Modal';
-import ProgressBar from '../components/ProgressBar';
-import GameOver from '../components/GameOver';
-import PageTransition from '../components/PageTransition';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowLeft,
+  Share2,
+  ShieldAlert,
+  CheckCircle,
+  Heart,
+  MessageCircle,
+  Repeat2,
+} from "lucide-react";
+import { useGame } from "../context/GameContext";
+import { useUser } from "../context/UserContext";
+import { socialMediaQuestions } from "../data/socialMediaQuestions";
+import Button from "../components/Button";
+import Card from "../components/Card";
+import Modal from "../components/Modal";
+import ProgressBar from "../components/ProgressBar";
+import GameOver from "../components/GameOver";
+import PageTransition from "../components/PageTransition";
 
 const SocialMediaMode: React.FC = () => {
   const navigate = useNavigate();
-  const { 
-    state, 
-    answerQuestion, 
-    resetGame, 
-    resetLevel, 
+  const { saveGameProgress } = useUser();
+  const {
+    state,
+    answerQuestion,
+    resetGame,
+    resetLevel,
     setLevel,
     checkLevelCompletion,
     checkGameCompletion,
     completeGame,
   } = useGame();
-  
-  const [currentQuestions, setCurrentQuestions] = useState(socialMediaQuestions.filter(q => q.level === state.level));
+
+  const [currentQuestions, setCurrentQuestions] = useState(
+    socialMediaQuestions.filter((q) => q.level === state.level)
+  );
   const [selectedPost, setSelectedPost] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -32,7 +44,9 @@ const SocialMediaMode: React.FC = () => {
 
   useEffect(() => {
     // Filter questions for the current level
-    const questions = socialMediaQuestions.filter(q => q.level === state.level);
+    const questions = socialMediaQuestions.filter(
+      (q) => q.level === state.level
+    );
     setCurrentQuestions(questions);
   }, [state.level]);
 
@@ -42,10 +56,10 @@ const SocialMediaMode: React.FC = () => {
 
   const handleAnswer = (isScam: boolean) => {
     if (selectedPost === null) return;
-    
+
     const post = currentQuestions[selectedPost];
     const correct = isScam === post.isScam;
-    
+
     setIsCorrect(correct);
     answerQuestion(correct);
     setShowFeedback(true);
@@ -54,45 +68,65 @@ const SocialMediaMode: React.FC = () => {
   const handleContinue = () => {
     setShowFeedback(false);
     setSelectedPost(null);
-    
+
     // Update current questions list by removing answered question
     if (selectedPost !== null) {
       const updatedQuestions = [...currentQuestions];
       updatedQuestions.splice(selectedPost, 1);
       setCurrentQuestions(updatedQuestions);
     }
-    
+
     // Check if all questions for this level have been answered
     if (currentQuestions.length <= 1) {
       if (state.correctAnswers >= 2) {
         // Check if this was the final level
         if (checkGameCompletion()) {
           completeGame();
+          // Save final progress to Firebase
+          saveGameProgress("social", {
+            completed: true,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
         } else {
+          // Save progress for completed level
+          saveGameProgress("social", {
+            completed: false,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
           setLevelCompleteModal(true);
         }
       } else {
         // Not enough correct answers, repeat the level
         resetLevel();
-        setCurrentQuestions(socialMediaQuestions.filter(q => q.level === state.level));
+        setCurrentQuestions(
+          socialMediaQuestions.filter((q) => q.level === state.level)
+        );
       }
     }
   };
-  
+
   const handleNextLevel = () => {
     setLevelCompleteModal(false);
-    setLevel((state.level + 1) as any);
+    setLevel((state.level + 1) as 1 | 2 | 3);
   };
 
   const handleBackToMenu = () => {
     resetGame();
-    navigate('/game');
+    navigate("/game");
   };
 
   const handlePlayAgain = () => {
     resetGame();
     resetLevel();
-    setCurrentQuestions(socialMediaQuestions.filter(q => q.level === state.level));
+    setCurrentQuestions(
+      socialMediaQuestions.filter((q) => q.level === state.level)
+    );
   };
 
   // Generate random engagement numbers
@@ -110,9 +144,9 @@ const SocialMediaMode: React.FC = () => {
         <div className="max-w-xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               leftIcon={<ArrowLeft size={16} />}
               onClick={handleBackToMenu}
             >
@@ -123,21 +157,23 @@ const SocialMediaMode: React.FC = () => {
               <span>{state.money}</span>
             </div>
           </div>
-          
+
           {/* Level and progress indicator */}
           <div className="mb-6">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center">
                 <Share2 size={18} className="text-purple-400 mr-2" />
-                <h2 className="text-xl font-bold text-white">Social Media Simulation</h2>
+                <h2 className="text-xl font-bold text-white">
+                  Social Media Simulation
+                </h2>
               </div>
               <div className="px-3 py-1 bg-dark-800 rounded-full text-sm">
                 Level {state.level}
               </div>
             </div>
-            <ProgressBar 
-              progress={3 - currentQuestions.length} 
-              total={3} 
+            <ProgressBar
+              progress={3 - currentQuestions.length}
+              total={3}
               progressColor="bg-purple-500"
             />
           </div>
@@ -148,9 +184,11 @@ const SocialMediaMode: React.FC = () => {
               {selectedPost === null ? (
                 <Card className="p-4">
                   <div className="p-2 border-b border-dark-700 mb-4">
-                    <h3 className="text-lg font-medium text-white">Social Feed</h3>
+                    <h3 className="text-lg font-medium text-white">
+                      Social Feed
+                    </h3>
                   </div>
-                  
+
                   {currentQuestions.length > 0 ? (
                     <div className="space-y-4">
                       {currentQuestions.map((post, index) => {
@@ -164,32 +202,36 @@ const SocialMediaMode: React.FC = () => {
                           >
                             <div className="p-3 bg-dark-800 flex items-center">
                               <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                                <img 
-                                  src={post.profilePic} 
+                                <img
+                                  src={post.profilePic}
                                   alt={post.username}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                               <div>
-                                <div className="font-medium text-white">{post.username}</div>
-                                <div className="text-xs text-gray-500">2 hours ago</div>
+                                <div className="font-medium text-white">
+                                  {post.username}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  2 hours ago
+                                </div>
                               </div>
                             </div>
-                            
+
                             <div className="p-3 text-gray-300 text-sm">
                               {post.content}
                             </div>
-                            
+
                             {post.image && (
                               <div className="aspect-[4/3] overflow-hidden">
-                                <img 
-                                  src={post.image} 
+                                <img
+                                  src={post.image}
                                   alt="Post content"
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                             )}
-                            
+
                             <div className="p-3 bg-dark-800 flex items-center justify-between text-xs text-gray-400">
                               <div className="flex items-center">
                                 <Heart size={14} className="mr-1" />
@@ -227,44 +269,48 @@ const SocialMediaMode: React.FC = () => {
                       <div className="p-3 bg-dark-800 flex items-center justify-between border-b border-dark-700">
                         <div className="flex items-center">
                           <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                            <img 
-                              src={currentQuestions[selectedPost]?.profilePic} 
+                            <img
+                              src={currentQuestions[selectedPost]?.profilePic}
                               alt={currentQuestions[selectedPost]?.username}
                               className="w-full h-full object-cover"
                             />
                           </div>
                           <div>
-                            <div className="font-medium text-white">{currentQuestions[selectedPost]?.username}</div>
-                            <div className="text-xs text-gray-500">2 hours ago</div>
+                            <div className="font-medium text-white">
+                              {currentQuestions[selectedPost]?.username}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              2 hours ago
+                            </div>
                           </div>
                         </div>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => setSelectedPost(null)}
                         >
                           Back to Feed
                         </Button>
                       </div>
-                      
+
                       <div className="p-4 text-gray-300">
                         {currentQuestions[selectedPost]?.content}
                       </div>
-                      
+
                       {currentQuestions[selectedPost]?.image && (
                         <div className="w-full">
-                          <img 
-                            src={currentQuestions[selectedPost]?.image} 
+                          <img
+                            src={currentQuestions[selectedPost]?.image}
                             alt="Post content"
                             className="w-full object-cover"
                           />
                         </div>
                       )}
-                      
+
                       <div className="p-4 border-t border-dark-700">
                         {!showFeedback ? (
                           <div className="flex gap-3">
-                            <Button 
+                            <Button
                               variant="outline"
                               leftIcon={<CheckCircle size={16} />}
                               onClick={() => handleAnswer(false)}
@@ -272,7 +318,7 @@ const SocialMediaMode: React.FC = () => {
                             >
                               Legitimate Post
                             </Button>
-                            <Button 
+                            <Button
                               variant="outline"
                               leftIcon={<ShieldAlert size={16} />}
                               onClick={() => handleAnswer(true)}
@@ -287,18 +333,38 @@ const SocialMediaMode: React.FC = () => {
                             animate={{ opacity: 1 }}
                             className="space-y-4"
                           >
-                            <div className={`p-4 rounded-lg ${isCorrect ? 'bg-green-900/20 border border-green-700' : 'bg-red-900/20 border border-red-700'}`}>
+                            <div
+                              className={`p-4 rounded-lg ${
+                                isCorrect
+                                  ? "bg-green-900/20 border border-green-700"
+                                  : "bg-red-900/20 border border-red-700"
+                              }`}
+                            >
                               <div className="flex items-center mb-2">
-                                <div className={`w-2 h-2 rounded-full mr-2 ${isCorrect ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                                <span className={`font-medium ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-                                  {isCorrect ? 'Correct Identification!' : 'Incorrect Identification'}
+                                <div
+                                  className={`w-2 h-2 rounded-full mr-2 ${
+                                    isCorrect ? "bg-green-500" : "bg-red-500"
+                                  }`}
+                                ></div>
+                                <span
+                                  className={`font-medium ${
+                                    isCorrect
+                                      ? "text-green-400"
+                                      : "text-red-400"
+                                  }`}
+                                >
+                                  {isCorrect
+                                    ? "Correct Identification!"
+                                    : "Incorrect Identification"}
                                 </span>
                               </div>
-                              <p className="text-gray-300">{currentQuestions[selectedPost]?.explanation}</p>
+                              <p className="text-gray-300">
+                                {currentQuestions[selectedPost]?.explanation}
+                              </p>
                             </div>
-                            
-                            <Button 
-                              variant="primary" 
+
+                            <Button
+                              variant="primary"
                               fullWidth
                               onClick={handleContinue}
                             >
@@ -311,36 +377,43 @@ const SocialMediaMode: React.FC = () => {
                   </motion.div>
                 </AnimatePresence>
               )}
-              
+
               {/* Game stats */}
               <Card className="p-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-2">
-                    <div className="text-sm text-gray-400 mb-1">Correct Answers</div>
-                    <div className="text-lg font-medium text-green-400">{state.correctAnswers}/{state.totalAnswers}</div>
+                    <div className="text-sm text-gray-400 mb-1">
+                      Correct Answers
+                    </div>
+                    <div className="text-lg font-medium text-green-400">
+                      {state.correctAnswers}/{state.totalAnswers}
+                    </div>
                   </div>
                   <div className="text-center p-2">
-                    <div className="text-sm text-gray-400 mb-1">Current Score</div>
-                    <div className="text-lg font-medium text-purple-400">{state.score}</div>
+                    <div className="text-sm text-gray-400 mb-1">
+                      Current Score
+                    </div>
+                    <div className="text-lg font-medium text-purple-400">
+                      {state.score}
+                    </div>
                   </div>
                 </div>
               </Card>
             </div>
           ) : (
-            <GameOver onPlayAgain={handlePlayAgain} onBackToMenu={handleBackToMenu} />
+            <GameOver
+              onPlayAgain={handlePlayAgain}
+              onBackToMenu={handleBackToMenu}
+            />
           )}
-          
+
           {/* Level complete modal */}
           <Modal
             isOpen={levelCompleteModal}
             onClose={() => setLevelCompleteModal(false)}
             title={`Level ${state.level} Completed!`}
             footer={
-              <Button 
-                variant="primary" 
-                fullWidth 
-                onClick={handleNextLevel}
-              >
+              <Button variant="primary" fullWidth onClick={handleNextLevel}>
                 Continue to Level {state.level + 1}
               </Button>
             }
@@ -353,20 +426,22 @@ const SocialMediaMode: React.FC = () => {
                   </span>
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-bold mb-2 text-white">
-                {state.correctAnswers === 3 ? 'Perfect Score!' : 'Good Job!'}
+                {state.correctAnswers === 3 ? "Perfect Score!" : "Good Job!"}
               </h3>
-              
+
               <p className="text-gray-300 mb-4">
-                {state.correctAnswers === 3 
+                {state.correctAnswers === 3
                   ? "You identified all social media posts correctly! You're becoming a social media security expert."
-                  : `You identified ${state.correctAnswers} out of 3 posts correctly. Keep learning to improve further.`
-                }
+                  : `You identified ${state.correctAnswers} out of 3 posts correctly. Keep learning to improve further.`}
               </p>
-              
+
               <div className="py-2 px-4 bg-dark-700 rounded-lg inline-block">
-                <span className="text-green-400">+${state.correctAnswers * 25}</span> added to your balance
+                <span className="text-green-400">
+                  +${state.correctAnswers * 25}
+                </span>{" "}
+                added to your balance
               </div>
             </div>
           </Modal>

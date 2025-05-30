@@ -15,6 +15,10 @@ import StandardMode from "./features/StandardMode";
 import EmailMode from "./features/EmailMode";
 import SocialMediaMode from "./features/SocialMediaMode";
 import URLMode from "./features/URLMode";
+import FirebaseTestPage from "./pages/FirebaseTestPage";
+// Import Firebase test utilities for debugging
+import "./utils/firebaseTest";
+import "./utils/debugProgress";
 
 // Create a protected route component that uses UserContext
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -90,6 +94,14 @@ const AppRoutes = () => {
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/resources" element={<ResourcesPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route
+        path="/firebase-test"
+        element={
+          <ProtectedRoute>
+            <FirebaseTestPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

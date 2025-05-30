@@ -9,6 +9,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useGame } from "../context/GameContext";
+import { useUser } from "../context/UserContext";
 import { ollamaService, EmailScam } from "../services/ollamaService";
 import Button from "../components/Button";
 import Card from "../components/Card";
@@ -19,6 +20,7 @@ import PageTransition from "../components/PageTransition";
 
 const EmailMode: React.FC = () => {
   const navigate = useNavigate();
+  const { saveGameProgress } = useUser();
   const {
     state,
     answerQuestion,
@@ -137,7 +139,23 @@ const EmailMode: React.FC = () => {
         // Check if this was the final level
         if (checkGameCompletion()) {
           completeGame();
+          // Save final progress to Firebase
+          saveGameProgress("email", {
+            completed: true,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
         } else {
+          // Save progress for completed level
+          saveGameProgress("email", {
+            completed: false,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
           setLevelCompleteModal(true);
         }
       } else {
@@ -384,17 +402,18 @@ const EmailMode: React.FC = () => {
                                 </span>
                               </div>
                               <p className="text-gray-300 mb-3">{feedback}</p>
-                              
+
                               {/* Show red flags for phishing emails */}
-                              {currentEmails[selectedEmail]?.isPhishing && 
-                               currentEmails[selectedEmail]?.redFlags && (
-                                <div className="mt-3">
-                                  <h4 className="text-sm font-medium text-gray-400 mb-2">
-                                    Red Flags to Look For:
-                                  </h4>
-                                  <ul className="text-sm text-gray-300 space-y-1">
-                                    {currentEmails[selectedEmail].redFlags.map(
-                                      (flag, idx) => (
+                              {currentEmails[selectedEmail]?.isPhishing &&
+                                currentEmails[selectedEmail]?.redFlags && (
+                                  <div className="mt-3">
+                                    <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                      Red Flags to Look For:
+                                    </h4>
+                                    <ul className="text-sm text-gray-300 space-y-1">
+                                      {currentEmails[
+                                        selectedEmail
+                                      ].redFlags.map((flag, idx) => (
                                         <li
                                           key={idx}
                                           className="flex items-center"
@@ -404,36 +423,38 @@ const EmailMode: React.FC = () => {
                                           </span>
                                           {flag}
                                         </li>
-                                      )
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
 
                               {/* Show trust indicators for legitimate emails */}
-                              {!currentEmails[selectedEmail]?.isPhishing && 
-                               currentEmails[selectedEmail]?.trustIndicators && (
-                                <div className="mt-3">
-                                  <h4 className="text-sm font-medium text-gray-400 mb-2">
-                                    Trust Indicators:
-                                  </h4>
-                                  <ul className="text-sm text-gray-300 space-y-1">
-                                    {currentEmails[selectedEmail].trustIndicators.map(
-                                      (indicator, idx) => (
-                                        <li
-                                          key={idx}
-                                          className="flex items-center"
-                                        >
-                                          <span className="text-green-400 mr-2">
-                                            ✓
-                                          </span>
-                                          {indicator}
-                                        </li>
-                                      )
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
+                              {!currentEmails[selectedEmail]?.isPhishing &&
+                                currentEmails[selectedEmail]
+                                  ?.trustIndicators && (
+                                  <div className="mt-3">
+                                    <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                      Trust Indicators:
+                                    </h4>
+                                    <ul className="text-sm text-gray-300 space-y-1">
+                                      {currentEmails[
+                                        selectedEmail
+                                      ].trustIndicators.map(
+                                        (indicator, idx) => (
+                                          <li
+                                            key={idx}
+                                            className="flex items-center"
+                                          >
+                                            <span className="text-green-400 mr-2">
+                                              ✓
+                                            </span>
+                                            {indicator}
+                                          </li>
+                                        )
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
                             </div>
 
                             <Button

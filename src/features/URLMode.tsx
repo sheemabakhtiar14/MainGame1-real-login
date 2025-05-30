@@ -9,6 +9,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useGame } from "../context/GameContext";
+import { useUser } from "../context/UserContext";
 import { ollamaService, URLScam } from "../services/ollamaService";
 import Button from "../components/Button";
 import Card from "../components/Card";
@@ -19,6 +20,7 @@ import PageTransition from "../components/PageTransition";
 
 const URLMode: React.FC = () => {
   const navigate = useNavigate();
+  const { saveGameProgress } = useUser();
   const {
     state,
     answerQuestion,
@@ -140,7 +142,23 @@ const URLMode: React.FC = () => {
         // Check if this was the final level
         if (checkGameCompletion()) {
           completeGame();
+          // Save final progress to Firebase
+          saveGameProgress("url", {
+            completed: true,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
         } else {
+          // Save progress for completed level
+          saveGameProgress("url", {
+            completed: false,
+            highestLevel: state.level,
+            score: state.score,
+            correctAnswers: state.overallCorrectAnswers,
+            totalAnswers: state.overallTotalAnswers,
+          });
           setLevelCompleteModal(true);
         }
       } else {
@@ -343,38 +361,49 @@ const URLMode: React.FC = () => {
                           <p className="text-gray-300 mb-3">{feedback}</p>
 
                           {/* Show red flags for phishing URLs */}
-                          {currentQuestion.isPhishing && currentQuestion.redFlags && (
-                            <div className="mt-3">
-                              <h4 className="text-sm font-medium text-gray-400 mb-2">
-                                Red Flags to Look For:
-                              </h4>
-                              <ul className="text-sm text-gray-300 space-y-1">
-                                {currentQuestion.redFlags.map((flag, idx) => (
-                                  <li key={idx} className="flex items-center">
-                                    <span className="text-red-400 mr-2">•</span>
-                                    {flag}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                          {currentQuestion.isPhishing &&
+                            currentQuestion.redFlags && (
+                              <div className="mt-3">
+                                <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                  Red Flags to Look For:
+                                </h4>
+                                <ul className="text-sm text-gray-300 space-y-1">
+                                  {currentQuestion.redFlags.map((flag, idx) => (
+                                    <li key={idx} className="flex items-center">
+                                      <span className="text-red-400 mr-2">
+                                        •
+                                      </span>
+                                      {flag}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
 
                           {/* Show trust indicators for legitimate URLs */}
-                          {!currentQuestion.isPhishing && currentQuestion.trustIndicators && (
-                            <div className="mt-3">
-                              <h4 className="text-sm font-medium text-gray-400 mb-2">
-                                Trust Indicators:
-                              </h4>
-                              <ul className="text-sm text-gray-300 space-y-1">
-                                {currentQuestion.trustIndicators.map((indicator, idx) => (
-                                  <li key={idx} className="flex items-center">
-                                    <span className="text-green-400 mr-2">✓</span>
-                                    {indicator}
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                          {!currentQuestion.isPhishing &&
+                            currentQuestion.trustIndicators && (
+                              <div className="mt-3">
+                                <h4 className="text-sm font-medium text-gray-400 mb-2">
+                                  Trust Indicators:
+                                </h4>
+                                <ul className="text-sm text-gray-300 space-y-1">
+                                  {currentQuestion.trustIndicators.map(
+                                    (indicator, idx) => (
+                                      <li
+                                        key={idx}
+                                        className="flex items-center"
+                                      >
+                                        <span className="text-green-400 mr-2">
+                                          ✓
+                                        </span>
+                                        {indicator}
+                                      </li>
+                                    )
+                                  )}
+                                </ul>
+                              </div>
+                            )}
 
                           {currentQuestion.legitimateUrl && (
                             <div className="mt-3 p-3 bg-green-900/10 border border-green-700/50 rounded">
