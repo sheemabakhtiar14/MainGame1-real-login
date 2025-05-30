@@ -296,4 +296,115 @@ export class FirebaseService {
       // Don't throw error here as this is not critical for login
     }
   }
+  /**
+   * Save user data (including money) to Firebase
+   */
+  static async saveUserData(userId: string, userData: Partial<{
+    username: string;
+    email: string;
+    money: number;
+    photoURL?: string;
+  }>): Promise<void> {
+    try {
+      console.log(`Saving user data for ${userId}:`, userData);
+      const userRef = doc(db, this.USERS_COLLECTION, userId);
+      
+      await updateDoc(userRef, {
+        ...userData,
+        updatedAt: serverTimestamp(),
+      });
+      
+      console.log(`User data saved successfully for ${userId}`);
+    } catch (error) {
+      console.error("Error saving user data:", error);
+      throw new Error("Failed to save user data");
+    }
+  }
+
+  /**
+   * Get user data (including money) from Firebase
+   */
+  static async getUserData(userId: string): Promise<{
+    username: string;
+    email: string;
+    money: number;
+    photoURL?: string;
+    createdAt?: Timestamp;
+    updatedAt?: Timestamp;
+  } | null> {
+    try {
+      console.log(`Fetching user data for ${userId}`);
+      const userRef = doc(db, this.USERS_COLLECTION, userId);
+      const userDoc = await getDoc(userRef);
+      
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        console.log(`User data retrieved for ${userId}:`, data);
+        return data as {
+          username: string;
+          email: string;
+          money: number;
+          photoURL?: string;
+          createdAt?: Timestamp;
+          updatedAt?: Timestamp;
+        };
+      } else {
+        console.log(`No user data found for ${userId}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      throw new Error("Failed to fetch user data");
+    }
+  }
+
+  /**
+   * Initialize user document with default money amount
+   */
+  static async initializeUserData(userId: string, userData: {
+    username: string;
+    email: string;
+    photoURL?: string;
+  }): Promise<void> {
+    try {
+      console.log(`Initializing user data for ${userId}`);
+      const userRef = doc(db, this.USERS_COLLECTION, userId);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        await setDoc(userRef, {
+          ...userData,
+          money: 100, // Default starting money
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+        console.log(`User data initialized for ${userId} with $100 starting money`);
+      } else {
+        console.log(`User data already exists for ${userId}`);
+      }
+    } catch (error) {
+      console.error("Error initializing user data:", error);
+      throw new Error("Failed to initialize user data");
+    }
+  }
+
+  /**
+   * Update user's virtual money
+   */
+  static async updateUserMoney(userId: string, newMoneyAmount: number): Promise<void> {
+    try {
+      console.log(`Updating money for ${userId} to $${newMoneyAmount}`);
+      const userRef = doc(db, this.USERS_COLLECTION, userId);
+      
+      await updateDoc(userRef, {
+        money: newMoneyAmount,
+        updatedAt: serverTimestamp(),
+      });
+      
+      console.log(`Money updated successfully for ${userId}: $${newMoneyAmount}`);
+    } catch (error) {
+      console.error("Error updating user money:", error);
+      throw new Error("Failed to update user money");
+    }
+  }
 }

@@ -4,6 +4,7 @@ export interface User {
   email: string;
   createdAt: string;
   photoURL?: string;
+  money: number; // Virtual money earned from games
 }
 
 export interface GameProgress {

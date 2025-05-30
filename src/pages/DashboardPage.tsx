@@ -12,6 +12,7 @@ import {
   Clock,
   CheckCircle,
   Award,
+  DollarSign,
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { GameMode } from "../types/game";
@@ -150,7 +151,21 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+            <Card className="p-4">
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-green-900/50 mr-4">
+                  <DollarSign className="text-green-400" size={24} />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Virtual Money</p>
+                  <p className="text-2xl font-bold text-white">
+                    ${userData.money || 100}
+                  </p>
+                </div>
+              </div>
+            </Card>
+            
             <Card className="p-4">
               <div className="flex items-center">
                 <div className="p-3 rounded-full bg-primary-900/50 mr-4">

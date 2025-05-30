@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from "react";
 import { GameState, GameMode, GameLevel } from "../types/game";
+import { useUser } from "./UserContext";
 
 const initialState: GameState = {
   mode: null,
@@ -25,6 +26,7 @@ type GameAction =
   | { type: "COMPLETE_GAME" }
   | { type: "RESET_GAME" }
   | { type: "RESET_LEVEL" }
+  | { type: "SET_MONEY"; payload: number }
   | {
       type: "INITIALIZE_WITH_PROGRESS";
       payload: {
@@ -105,6 +107,11 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
         correctAnswers: 0,
         totalAnswers: 0,
       };
+    case "SET_MONEY":
+      return {
+        ...state,
+        money: action.payload,
+      };
     case "INITIALIZE_WITH_PROGRESS":
       return {
         ...state,
@@ -141,6 +148,7 @@ interface GameContextType {
     score: number,
     money: number
   ) => void;
+  setMoney: (amount: number) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -149,6 +157,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
+  const { state: userState, updateUserMoney } = useUser();
+
+  // Initialize game money from user data when user changes
+  useEffect(() => {
+    if (userState.user?.money !== undefined) {
+      dispatch({ type: "SET_MONEY", payload: userState.user.money });
+    }
+  }, [userState.user?.money]);
 
   const selectMode = (mode: GameMode) => {
     dispatch({ type: "SET_MODE", payload: mode });
@@ -158,11 +174,34 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
     dispatch({ type: "SET_LEVEL", payload: level });
   };
 
-  const answerQuestion = (isCorrect: boolean) => {
+  const answerQuestion = async (isCorrect: boolean) => {
     if (isCorrect) {
       dispatch({ type: "ANSWER_CORRECT" });
+      // Save updated money to database after correct answer
+      const newMoney = state.money + 25;
+      try {
+        await updateUserMoney(newMoney);
+      } catch (error) {
+        console.error("Failed to update money in database:", error);
+      }
     } else {
       dispatch({ type: "ANSWER_INCORRECT" });
+      // Save updated money to database after incorrect answer
+      const newMoney = Math.max(0, state.money - 10);
+      try {
+        await updateUserMoney(newMoney);
+      } catch (error) {
+        console.error("Failed to update money in database:", error);
+      }
+    }
+  };
+
+  const setMoney = async (amount: number) => {
+    dispatch({ type: "SET_MONEY", payload: amount });
+    try {
+      await updateUserMoney(amount);
+    } catch (error) {
+      console.error("Failed to update money in database:", error);
     }
   };
 
@@ -224,6 +263,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({
         checkLevelCompletion,
         checkGameCompletion,
         initializeWithProgress,
+        setMoney,
       }}
     >
       {children}
