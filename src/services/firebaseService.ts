@@ -22,10 +22,30 @@ export interface FirebaseGameProgress extends Omit<GameProgress, "lastPlayed"> {
   updatedAt: Timestamp;
 }
 
+export interface CommunityReport {
+  id?: string;
+  type: string;
+  description: string;
+  location?: string;
+  reportedBy: string;
+  timestamp: string;
+  upvotes: number;
+  verified: boolean;
+  upvotedBy?: string[];
+}
+
+export interface FirebaseCommunityReport
+  extends Omit<CommunityReport, "timestamp"> {
+  timestamp: Timestamp;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
 export class FirebaseService {
   // Collection references
   private static USERS_COLLECTION = "users";
   private static GAME_PROGRESS_COLLECTION = "gameProgress";
+  private static COMMUNITY_REPORTS_COLLECTION = "communityReports";
 
   /**
    * Save or update game progress for a user
@@ -418,6 +438,133 @@ export class FirebaseService {
     } catch (error) {
       console.error("Error updating user money:", error);
       throw new Error("Failed to update user money");
+    }
+  }
+
+  /**
+   * Submit a community scam report
+   */
+  static async submitCommunityReport(
+    report: Omit<CommunityReport, "id">
+  ): Promise<string> {
+    try {
+      console.log("Submitting community report:", report);
+
+      const reportsRef = collection(db, this.COMMUNITY_REPORTS_COLLECTION);
+      const docRef = doc(reportsRef);
+
+      const reportData: FirebaseCommunityReport = {
+        ...report,
+        timestamp: Timestamp.fromDate(new Date(report.timestamp)),
+        upvotedBy: [],
+        createdAt: serverTimestamp() as Timestamp,
+        updatedAt: serverTimestamp() as Timestamp,
+      };
+
+      await setDoc(docRef, reportData);
+
+      console.log(
+        "Community report submitted successfully with ID:",
+        docRef.id
+      );
+      return docRef.id;
+    } catch (error) {
+      console.error("Error submitting community report:", error);
+      throw new Error("Failed to submit community report");
+    }
+  }
+
+  /**
+   * Get all community reports, ordered by timestamp (newest first)
+   */
+  static async getCommunityReports(): Promise<CommunityReport[]> {
+    try {
+      console.log("Loading community reports...");
+
+      const reportsRef = collection(db, this.COMMUNITY_REPORTS_COLLECTION);
+      const q = query(reportsRef, orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+
+      const reports: CommunityReport[] = snapshot.docs.map((doc) => {
+        const data = doc.data() as FirebaseCommunityReport;
+        return {
+          id: doc.id,
+          type: data.type,
+          description: data.description,
+          location: data.location,
+          reportedBy: data.reportedBy,
+          timestamp: data.timestamp.toDate().toISOString(),
+          upvotes: data.upvotes,
+          verified: data.verified,
+          upvotedBy: data.upvotedBy || [],
+        };
+      });
+
+      console.log(`Loaded ${reports.length} community reports`);
+      return reports;
+    } catch (error) {
+      console.error("Error loading community reports:", error);
+      throw new Error("Failed to load community reports");
+    }
+  }
+
+  /**
+   * Upvote a community report
+   */
+  static async upvoteCommunityReport(
+    reportId: string,
+    userId: string
+  ): Promise<void> {
+    try {
+      console.log(`Upvoting report ${reportId} by user ${userId}`);
+
+      const reportRef = doc(db, this.COMMUNITY_REPORTS_COLLECTION, reportId);
+      const reportDoc = await getDoc(reportRef);
+
+      if (!reportDoc.exists()) {
+        throw new Error("Report not found");
+      }
+
+      const reportData = reportDoc.data() as FirebaseCommunityReport;
+      const upvotedBy = reportData.upvotedBy || [];
+
+      // Check if user already upvoted
+      if (upvotedBy.includes(userId)) {
+        console.log("User has already upvoted this report");
+        return;
+      }
+
+      // Add user to upvotedBy array and increment upvotes
+      await updateDoc(reportRef, {
+        upvotes: reportData.upvotes + 1,
+        upvotedBy: [...upvotedBy, userId],
+        updatedAt: serverTimestamp(),
+      });
+
+      console.log("Report upvoted successfully");
+    } catch (error) {
+      console.error("Error upvoting community report:", error);
+      throw new Error("Failed to upvote community report");
+    }
+  }
+
+  /**
+   * Mark a community report as verified (admin function)
+   */
+  static async verifyReport(reportId: string): Promise<void> {
+    try {
+      console.log(`Verifying report ${reportId}`);
+
+      const reportRef = doc(db, this.COMMUNITY_REPORTS_COLLECTION, reportId);
+      await updateDoc(reportRef, {
+        verified: true,
+        updatedAt: serverTimestamp(),
+      });
+
+      console.log("Report verified successfully");
+    } catch (error) {
+      console.error("Error verifying report:", error);
+      throw new Error("Failed to verify report");
     }
   }
 }

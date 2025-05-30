@@ -11,6 +11,8 @@ import AboutPage from "./pages/AboutPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import HelplinePage from "./pages/HelplinePage";
+import CommunityPage from "./pages/CommunityPage";
 import StandardMode from "./features/StandardMode";
 import EmailMode from "./features/EmailMode";
 import SocialMediaMode from "./features/SocialMediaMode";
@@ -91,9 +93,10 @@ const AppRoutes = () => {
             <URLMode />
           </ProtectedRoute>
         }
-      />
+      />{" "}
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/resources" element={<ResourcesPage />} />
+      <Route path="/helpline" element={<HelplinePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route
         path="/firebase-test"
@@ -103,6 +106,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/community" element={<CommunityPage />} />
     </Routes>
   );
 };

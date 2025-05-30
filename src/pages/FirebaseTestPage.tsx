@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { useUser } from "../context/UserContext";
 import { FirebaseService } from "../services/firebaseService";
 import Button from "../components/Button";

@@ -11,6 +11,7 @@ import {
   LogOut,
   User,
   DollarSign,
+  Phone,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUser } from "../context/UserContext";
@@ -30,6 +31,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { to: "/game", label: "Game", icon: <Gamepad2 size={20} /> },
     { to: "/services", label: "Services", icon: <Wrench size={20} /> },
     { to: "/resources", label: "Resources", icon: <BookOpen size={20} /> },
+    { to: "/helpline", label: "Helpline", icon: <Phone size={20} /> },
+    { to: "/community", label: "Community", icon: <User size={20} /> },
     { to: "/about", label: "About", icon: <Info size={20} /> },
   ];
 
