@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import chatbotService from '../services/chatbotService';
-import { X, Send, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from "react";
+import chatbotService from "../services/chatbotService";
+import { X, Send, RefreshCw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatbotProps {
   onClose: () => void;
@@ -10,17 +10,16 @@ interface ChatbotProps {
 interface Message {
   text: string;
   isUser: boolean;
-  timestamp: Date;
 }
 
 const Chatbot = ({ onClose }: ChatbotProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Initial welcome message
   useEffect(() => {
@@ -29,7 +28,6 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
         {
           text: "👋 Hi there! I'm ScamGuard AI, your digital safety expert. Ask me anything about scams, online safety, or how to protect yourself from fraud.",
           isUser: false,
-          timestamp: new Date(),
         },
       ]);
     }
@@ -42,9 +40,9 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
     // Only scroll if last message is from user or bot message is short
     if (
       lastMsg.isUser ||
-      (typeof lastMsg.text === 'string' && lastMsg.text.length < 400)
+      (typeof lastMsg.text === "string" && lastMsg.text.length < 400)
     ) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
     // For long bot messages, do not auto-scroll
   }, [messages]);
@@ -56,13 +54,14 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
     const handleScroll = () => {
       // Show button if not at bottom (with a small threshold)
       setShowScrollButton(
-        container.scrollHeight - container.scrollTop - container.clientHeight > 80
+        container.scrollHeight - container.scrollTop - container.clientHeight >
+          80
       );
     };
-    container.addEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll);
     // Initial check
     handleScroll();
-    return () => container.removeEventListener('scroll', handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [messages]);
 
   // Focus input when chat opens
@@ -78,47 +77,39 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
       {
         text: "👋 Chat reset! I'm ScamGuard AI, your digital safety expert. How can I help you today?",
         isUser: false,
-        timestamp: new Date(),
       },
     ]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!inputValue.trim() || isLoading) return;
-    
+
     const userMessage = inputValue.trim();
-    setInputValue('');
-    
+    setInputValue("");
+
     // Add user message to chat
-    setMessages((prev) => [
-      ...prev,
-      { text: userMessage, isUser: true, timestamp: new Date() },
-    ]);
-    
+    setMessages((prev) => [...prev, { text: userMessage, isUser: true }]);
+
     // Show loading state
     setIsLoading(true);
-    
+
     try {
       // Get response from chatbot service
       const response = await chatbotService.sendMessage(userMessage);
-      
+
       // Add bot response to chat
-      setMessages((prev) => [
-        ...prev,
-        { text: response, isUser: false, timestamp: new Date() },
-      ]);
+      setMessages((prev) => [...prev, { text: response, isUser: false }]);
     } catch (error) {
-      console.error('Error getting chatbot response:', error);
-      
+      console.error("Error getting chatbot response:", error);
+
       // Add error message
       setMessages((prev) => [
         ...prev,
-        { 
-          text: "Sorry, I'm having trouble connecting. Please try again in a moment.", 
-          isUser: false, 
-          timestamp: new Date() 
+        {
+          text: "Sorry, I'm having trouble connecting. Please try again in a moment.",
+          isUser: false,
         },
       ]);
     } finally {
@@ -134,12 +125,21 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
       // Split by single newlines for line breaks
       const lines = para.split(/\n/);
       return (
-        <p key={i} style={{ marginBottom: i < paragraphs.length - 1 ? '0.75em' : 0 }}>
+        <p
+          key={i}
+          style={{ marginBottom: i < paragraphs.length - 1 ? "0.75em" : 0 }}
+        >
           {lines.map((line, j) => {
             // Bold text between asterisks
-            const boldFormatted = line.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+            const boldFormatted = line.replace(
+              /\*(.*?)\*/g,
+              "<strong>$1</strong>"
+            );
             return (
-              <span key={j} dangerouslySetInnerHTML={{ __html: boldFormatted }} />
+              <span
+                key={j}
+                dangerouslySetInnerHTML={{ __html: boldFormatted }}
+              />
             );
           })}
           {i < paragraphs.length - 1 && <br />}
@@ -155,7 +155,7 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
         initial={{ opacity: 0, y: 20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.9 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
         {/* Header */}
         <div className="bg-secondary-700 text-white p-4 flex justify-between items-center">
@@ -163,15 +163,15 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
             <h3 className="font-medium">ScamGuard AI</h3>
           </div>
           <div className="flex items-center">
-            <button 
-              onClick={resetChat} 
+            <button
+              onClick={resetChat}
               className="text-white hover:text-secondary-300 mr-3 transition-colors"
               aria-label="Reset chat"
             >
               <RefreshCw size={18} />
             </button>
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="text-white hover:text-secondary-300 transition-colors"
               aria-label="Close chat"
             >
@@ -184,43 +184,50 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
         <div
           ref={messagesContainerRef}
           className="flex-1 p-4 overflow-y-auto bg-dark-900 custom-scrollbar relative"
-          style={{ scrollBehavior: 'smooth' }}
+          style={{ scrollBehavior: "smooth" }}
         >
           {/* Scroll to bottom button */}
           {showScrollButton && (
             <button
-              onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() =>
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+              }
               className="absolute right-4 bottom-4 bg-secondary-700 text-white rounded-full shadow-lg p-2 flex items-center justify-center animate-fade-in z-10 hover:bg-secondary-600 focus:outline-none"
               aria-label="Scroll to bottom"
               type="button"
             >
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+              <svg
+                width="22"
+                height="22"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
             </button>
           )}
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`mb-4 flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+              className={`mb-4 flex ${
+                msg.isUser ? "justify-end" : "justify-start"
+              }`}
             >
               <div
                 className={`px-4 py-2 rounded-2xl shadow-md max-w-full break-words text-base font-sans transition-all duration-200 ${
                   msg.isUser
-                    ? 'bg-secondary-600 text-white rounded-br-md self-end min-w-[2.5rem] max-w-[70%]' // purple
-                    : 'bg-dark-700 text-gray-100 rounded-bl-md self-start min-w-[2.5rem] max-w-[70%]'
+                    ? "bg-secondary-600 text-white rounded-br-md self-end min-w-[2.5rem] max-w-[70%]"
+                    : "bg-dark-700 text-gray-100 rounded-bl-md self-start min-w-[2.5rem] max-w-[70%]"
                 }`}
-                style={{ width: 'fit-content', minWidth: '2.5rem' }}
+                style={{ width: "fit-content", minWidth: "2.5rem" }}
               >
                 {formatMessage(msg.text)}
-              </div>
-              <div
-                className={`text-xs mt-1 text-gray-400 ${
-                  msg.isUser ? 'text-right ml-2 self-end' : 'text-left mr-2 self-start'
-                }`}
-              >
-                {msg.timestamp.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
               </div>
             </div>
           ))}
@@ -228,9 +235,18 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
             <div className="flex items-center mb-4 max-w-[85%]">
               <div className="bg-dark-700 p-3 rounded-2xl">
                 <div className="flex space-x-2">
-                  <div className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div
+                    className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 rounded-full bg-secondary-400 animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -239,28 +255,31 @@ const Chatbot = ({ onClose }: ChatbotProps) => {
         </div>
 
         {/* Input area */}
-        <form onSubmit={handleSubmit} className="p-3 border-t border-secondary-800 bg-dark-900">
+        <form
+          onSubmit={handleSubmit}
+          className="p-3 border-t border-secondary-800 bg-dark-900"
+        >
           <div className="flex items-end gap-2">
             <textarea
-              ref={inputRef as any}
+              ref={inputRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your message..."
               rows={1}
-              className="resize-none flex-1 px-4 py-2 border border-secondary-800 bg-dark-800 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary-800 focus:border-transparent transition-all min-h-[2.5rem] max-h-32 font-sans text-base custom-scrollbar"
-              style={{ overflow: 'auto' }}
+              className="resize-none flex-1 px-4 py-2 border border-secondary-800 bg-dark-800 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary-800 focus:border-transparent transition-all min-h-[2.5rem] max-h-32 font-sans text-base overflow-hidden"
+              style={{ overflow: "hidden" }}
               disabled={isLoading}
-              onInput={e => {
+              onInput={(e) => {
                 const target = e.target as HTMLTextAreaElement;
-                target.style.height = '2.5rem';
-                target.style.height = target.scrollHeight + 'px';
+                target.style.height = "2.5rem";
+                target.style.height = target.scrollHeight + "px";
               }}
-              onKeyDown={e => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   if (inputValue.trim() && !isLoading) {
                     // Simulate form submit
-                    handleSubmit(e as any);
+                    handleSubmit(e as React.FormEvent);
                   }
                 }
               }}
