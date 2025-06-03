@@ -45,8 +45,7 @@ class GeminiService {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error calling ${endpoint}:`, error);
-      throw new Error(
+      console.error(`Error calling ${endpoint}:`, error);      throw new Error(
         `Failed to connect to Gemini service. Make sure the Python service is running on port 5000.`
       );
     }

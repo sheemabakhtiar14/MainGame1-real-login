@@ -11,7 +11,7 @@ import {
 import { useGame } from "../context/GameContext";
 import { useUser } from "../context/UserContext";
 import { GameLevel } from "../types/game";
-import { ollamaService, URLScam } from "../services/ollamaService";
+import { geminiService, URLScam } from "../services/geminiService";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
@@ -73,7 +73,7 @@ const URLMode: React.FC = () => {
 
     try {
       // Use bulk generation for better performance
-      const allURLs = await ollamaService.generateURLScamsBulk();
+      const allURLs = await geminiService.generateURLScamsBulk();
       setAllLevelURLs(allURLs);
       const currentLevelURLs = allURLs[state.level] || [];
       setCurrentURLs(currentLevelURLs);
@@ -130,7 +130,7 @@ const URLMode: React.FC = () => {
 
     // Generate personalized feedback using LLM
     try {
-      const feedbackText = await ollamaService.generateFeedback({
+      const feedbackText = await geminiService.generateFeedback({
         userAnswer: isScam,
         isCorrect: correct,
         scamType: "url",

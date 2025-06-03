@@ -5,6 +5,10 @@ from typing import Dict, Any, List
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -37,7 +41,8 @@ class GeminiService:
                 return "Example email scam: Urgent security alert requiring immediate action."
             else:
                 return "Example URL scam: Fake domain mimicking legitimate service."
-      def _call_gemini(self, prompt: str, context: str = "") -> str:
+    
+    def _call_gemini(self, prompt: str, context: str = "") -> str:
         """Make API call to Gemini"""
         full_prompt = f"{context}\n\n{prompt}" if context else prompt
         
@@ -84,7 +89,8 @@ class GeminiService:
         
         Make it realistic but clearly a scam for training purposes.
         """
-          response = self._call_gemini(prompt, context)
+        
+        response = self._call_gemini(prompt, context)
         return self._parse_json_response(response, 'email', level)
     
     def generate_url_scam(self, level: int) -> Dict[str, Any]:
@@ -117,7 +123,8 @@ class GeminiService:
         
         Make it realistic but clearly a scam for training purposes.
         """
-          response = self._call_gemini(prompt, context)
+        
+        response = self._call_gemini(prompt, context)
         return self._parse_json_response(response, 'url', level)
     
     def generate_feedback(self, user_answer: bool, is_correct: bool, scam_type: str, content: Dict[str, Any]) -> str:
@@ -140,7 +147,8 @@ class GeminiService:
         
         Be supportive and educational.
         """
-          response = self._call_gemini(prompt)
+        
+        response = self._call_gemini(prompt)
         return response if response and not response.startswith("Error") else self._get_fallback_feedback(is_correct, scam_type)
     
     def _parse_json_response(self, response: str, scam_type: str, level: int) -> Dict[str, Any]:
@@ -154,7 +162,7 @@ class GeminiService:
                 return json.loads(json_str)
         except (json.JSONDecodeError, ValueError):
             pass
-          # Fallback to generated content
+        # Fallback to generated content
         return self._generate_fallback_content(scam_type, level)
     
     def _generate_fallback_content(self, scam_type: str, level: int) -> Dict[str, Any]:
@@ -235,7 +243,8 @@ class GeminiService:
         Focus on: proper domains, no urgency tactics, clear sender identity, no suspicious links.
         {legitimate_contexts.get(level, legitimate_contexts[1])}
         """
-          response = self._call_gemini(prompt, context)
+        
+        response = self._call_gemini(prompt, context)
         result = self._parse_json_response(response, 'email_legitimate', level)
         result['isPhishing'] = False  # Ensure this is set correctly
         return result
@@ -272,7 +281,8 @@ class GeminiService:
         Focus on: proper HTTPS, legitimate domains, clear paths, official company URLs.
         {legitimate_contexts.get(level, legitimate_contexts[1])}
         """
-          response = self._call_gemini(prompt, context)
+        
+        response = self._call_gemini(prompt, context)
         result = self._parse_json_response(response, 'url_legitimate', level)
         result['isPhishing'] = False  # Ensure this is set correctly
         return result
@@ -295,7 +305,8 @@ class GeminiService:
 gemini_service = GeminiService("gemini-1.5-flash")
 
 @app.route('/health', methods=['GET'])
-def health_check():    """Health check endpoint"""
+def health_check():
+    """Health check endpoint"""
     return jsonify({"status": "healthy", "model": gemini_service.model_name})
 
 @app.route('/generate/email', methods=['POST'])
@@ -304,7 +315,7 @@ def generate_email():
     data = request.get_json()
     level = data.get('level', 1)
     
-    result = ollama_service.generate_email_scam(level)
+    result = gemini_service.generate_email_scam(level)
     return jsonify(result)
 
 @app.route('/generate/url', methods=['POST'])
@@ -313,7 +324,7 @@ def generate_url():
     data = request.get_json()
     level = data.get('level', 1)
     
-    result = ollama_service.generate_url_scam(level)
+    result = gemini_service.generate_url_scam(level)
     return jsonify(result)
 
 @app.route('/feedback', methods=['POST'])
@@ -325,7 +336,7 @@ def generate_feedback():
     scam_type = data.get('scamType')
     content = data.get('content', {})
     
-    feedback = ollama_service.generate_feedback(user_answer, is_correct, scam_type, content)
+    feedback = gemini_service.generate_feedback(user_answer, is_correct, scam_type, content)
     return jsonify({"feedback": feedback})
 
 @app.route('/generate/email/bulk', methods=['POST'])
@@ -340,11 +351,11 @@ def generate_email_bulk():
             
             # Generate 2 scam emails
             for i in range(2):
-                email = ollama_service.generate_email_content(level, is_scam=True)
+                email = gemini_service.generate_email_content(level, is_scam=True)
                 emails.append(email)
             
             # Generate 1 legitimate email
-            legitimate_email = ollama_service.generate_email_content(level, is_scam=False)
+            legitimate_email = gemini_service.generate_email_content(level, is_scam=False)
             emails.append(legitimate_email)
             
             # Shuffle to randomize order
@@ -367,11 +378,11 @@ def generate_url_bulk():
             
             # Generate 2 scam URLs
             for i in range(2):
-                url = ollama_service.generate_url_content(level, is_scam=True)
+                url = gemini_service.generate_url_content(level, is_scam=True)
                 urls.append(url)
             
             # Generate 1 legitimate URL
-            legitimate_url = ollama_service.generate_url_content(level, is_scam=False)
+            legitimate_url = gemini_service.generate_url_content(level, is_scam=False)
             urls.append(legitimate_url)
             
             # Shuffle to randomize order
@@ -383,7 +394,7 @@ def generate_url_bulk():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    print("Starting Ollama Phishing Simulation Service...")
-    print(f"Using model: {ollama_service.model_name}")
-    print("Make sure Ollama is running with: ollama serve")
+    print("Starting Gemini Phishing Simulation Service...")
+    print(f"Using model: {gemini_service.model_name}")
+    print("Make sure to set GEMINI_API_KEY environment variable")
     app.run(host='0.0.0.0', port=5000, debug=True)

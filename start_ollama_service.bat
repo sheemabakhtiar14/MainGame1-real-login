@@ -1,7 +1,15 @@
 @echo off
-echo Starting Ollama Phishing Simulation Service...
 echo.
-echo Make sure Ollama is running first with: ollama serve
+echo ============================================
+echo   NOTICE: This service has been updated
+echo ============================================
 echo.
-python ollama_service.py
+echo This project now uses Gemini AI instead of Ollama.
+echo.
+echo To start the new service, please use:
+echo   start_gemini_service.bat
+echo.
+echo For setup instructions, see:
+echo   GEMINI_SETUP.md
+echo.
 pause

@@ -11,7 +11,7 @@ import {
 import { useGame } from "../context/GameContext";
 import { useUser } from "../context/UserContext";
 import { GameLevel } from "../types/game";
-import { ollamaService, EmailScam } from "../services/ollamaService";
+import { geminiService, EmailScam } from "../services/geminiService";
 import Button from "../components/Button";
 import Card from "../components/Card";
 import Modal from "../components/Modal";
@@ -73,7 +73,7 @@ const EmailMode: React.FC = () => {
 
     try {
       // Use bulk generation for better performance
-      const allEmails = await ollamaService.generateEmailScamsBulk();
+      const allEmails = await geminiService.generateEmailScamsBulk();
       setAllLevelEmails(allEmails);
       setCurrentEmails(allEmails[state.level] || []);
       setInitialLoadComplete(true);
@@ -125,7 +125,7 @@ const EmailMode: React.FC = () => {
 
     // Generate personalized feedback using LLM
     try {
-      const feedbackText = await ollamaService.generateFeedback({
+      const feedbackText = await geminiService.generateFeedback({
         userAnswer: isScam,
         isCorrect: correct,
         scamType: "email",
