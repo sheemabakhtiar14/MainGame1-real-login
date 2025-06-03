@@ -69,7 +69,7 @@ const ServicesPage: React.FC = () => {
                 <div className="mt-auto">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-medium text-accent-400">{service.price}</span>
-                    <Button variant="outline" size="sm"><a target="_blank" href="#">Detect</a></Button>
+                    <Button variant="outline" size="sm"><a target="_blank" href="https://phishing-website-checker-6sps.onrender.com">Detect</a></Button>
                   </div>
                 </div>
               </Card>
