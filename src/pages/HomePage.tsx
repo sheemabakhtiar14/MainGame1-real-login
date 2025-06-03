@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -13,11 +13,74 @@ import {
 import Button from "../components/Button";
 import Card from "../components/Card";
 import PageTransition from "../components/PageTransition";
+import FakeAdPopup from "../components/FakeAdPopup";
 import { useUser } from "../context/UserContext";
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useUser();
+
+  // State for managing fake ad popups
+  const [activePopups, setActivePopups] = useState<{
+    popup1: boolean;
+    popup2: boolean;
+    popup3: boolean;
+  }>({
+    popup1: false,
+    popup2: false,
+    popup3: false,
+  });
+
+  // Effect to show popups with specified timing
+  useEffect(() => {
+    // First popup after 3 seconds
+    const timer1 = setTimeout(() => {
+      setActivePopups((prev) => ({ ...prev, popup1: true }));
+    }, 3000);
+
+    // Second popup after 8 seconds (3 + 5)
+    const timer2 = setTimeout(() => {
+      setActivePopups((prev) => ({ ...prev, popup2: true }));
+    }, 8000);
+
+    // Third popup after 13 seconds (3 + 5 + 5)
+    const timer3 = setTimeout(() => {
+      setActivePopups((prev) => ({ ...prev, popup3: true }));
+    }, 13000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, []);
+
+  // Handle popup close (good behavior)
+  const handlePopupClose = (popupId: "popup1" | "popup2" | "popup3") => {
+    setActivePopups((prev) => ({ ...prev, [popupId]: false }));
+    alert(
+      "Good job! 🎉 You correctly identified this as a suspicious ad and closed it safely. This is exactly what you should do when you encounter pop-up ads like this!"
+    );
+  }; // Handle ad click (dangerous behavior)
+  const handleAdClick = (popupId: "popup1" | "popup2" | "popup3") => {
+    console.log("Ad clicked:", popupId); // Debug log
+    setActivePopups((prev) => ({ ...prev, [popupId]: false }));
+    alert(
+      "🚨 DANGER! This was a FAKE SCAM advertisement!\n\n" +
+        "⚠️ What you just clicked could have been dangerous:\n" +
+        "• Malware installation\n" +
+        "• Identity theft\n" +
+        "• Financial fraud\n" +
+        "• Phishing attacks\n\n" +
+        "✅ What you SHOULD do with pop-up ads:\n" +
+        "1. NEVER click on suspicious pop-ups\n" +
+        "2. Close them using the X button\n" +
+        "3. Don't enter personal information\n" +
+        "4. Use ad blockers\n" +
+        "5. Keep your browser updated\n\n" +
+        "Remember: Legitimate companies don't use aggressive pop-up ads!"
+    );
+  };
 
   const features = [
     {
@@ -120,7 +183,6 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </section>
-
         {/* Features section */}
         <section className="mb-12">
           <div className="text-center mb-8">
@@ -158,7 +220,6 @@ const HomePage: React.FC = () => {
             ))}
           </div>
         </section>
-
         {/* Emergency Helpline Section */}
         <section className="mb-12">
           <motion.div
@@ -201,7 +262,6 @@ const HomePage: React.FC = () => {
             </div>
           </motion.div>
         </section>
-
         {/* Call to action */}
         <section>
           <motion.div
@@ -248,7 +308,29 @@ const HomePage: React.FC = () => {
               </div>
             )}
           </motion.div>
-        </section>
+        </section>{" "}
+        {/* Fake Ad Popups for Educational Purposes */}
+        <FakeAdPopup
+          isVisible={activePopups.popup1}
+          adType="congratulations"
+          position="top-right"
+          onClose={() => handlePopupClose("popup1")}
+          onAdClick={() => handleAdClick("popup1")}
+        />
+        <FakeAdPopup
+          isVisible={activePopups.popup2}
+          adType="winner"
+          position="bottom-left"
+          onClose={() => handlePopupClose("popup2")}
+          onAdClick={() => handleAdClick("popup2")}
+        />
+        <FakeAdPopup
+          isVisible={activePopups.popup3}
+          adType="prize"
+          position="bottom-right"
+          onClose={() => handlePopupClose("popup3")}
+          onAdClick={() => handleAdClick("popup3")}
+        />
       </div>
     </PageTransition>
   );
