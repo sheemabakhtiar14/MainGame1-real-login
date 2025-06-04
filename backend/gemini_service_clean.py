@@ -8,8 +8,8 @@ from flask_cors import CORS
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# Load environment variables from backend/.env file
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -345,7 +345,7 @@ class OptimizedGeminiService:
             return self.generate_legitimate_url(level)
 
 # Initialize the optimized service
-gemini_service = OptimizedGeminiService("gemini-1.5-flash")
+gemini_service = OptimizedGeminiService("gemini-1.5-pro")
 
 @app.route('/health', methods=['GET'])
 def health_check():
